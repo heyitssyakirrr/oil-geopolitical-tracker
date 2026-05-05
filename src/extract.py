@@ -20,7 +20,7 @@ def fetch_commodity_prices(ticker_symbol: str, start_date: str, end_date: str) -
     logger.info(f"Fetching price data for {ticker_symbol} from {start_date} to {end_date}")
     
     try:
-        df = yf.download(ticker_symbol, start=start_date, end=end_date)
+        df = yf.download(ticker_symbol, start=start_date, end=end_date, progress=False)
         if df.empty:
             raise ValueError(f"No data found for {ticker_symbol} between {start_date} and {end_date}")
         
@@ -52,5 +52,4 @@ def fetch_all_commodities(start_date: str, end_date: str) -> pd.DataFrame:
         logger.info(f"Combined data contains {len(combined_df)} rows")
         return combined_df
     else:
-        logger.warning("No data fetched for any commodities")
-        return pd.DataFrame()
+        raise RuntimeError("No data was fetched for any commodity — check tickers and network connection")
