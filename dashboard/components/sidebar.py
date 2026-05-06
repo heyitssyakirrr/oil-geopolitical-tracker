@@ -22,10 +22,10 @@ def render_sidebar(runs) -> None:
             last = runs.iloc[0]
             ok   = last["status"] == "success"
             st.markdown(
-                f'<div style="font-family:IBM Plex Mono,monospace;font-size:10px;'
+                f'<div style="font-family:IBM Plex Mono,monospace;font-size:11px;'
                 f'color:{"#22c55e" if ok else "#ef4444"};padding:8px 16px 0">'
                 f'{"🟢 Live" if ok else "🔴 Failed"} · {last["started_at"].strftime("%d %b %Y %H:%M")}</div>'
-                f'<div style="font-family:IBM Plex Mono,monospace;font-size:9px;color:#6b7fa8;padding:2px 16px 14px">'
+                f'<div style="font-family:IBM Plex Mono,monospace;font-size:11px;color:#6b7fa8;padding:2px 16px 14px">'
                 f'{last["rows_loaded"]:,} rows</div>',
                 unsafe_allow_html=True,
             )
@@ -46,29 +46,3 @@ def render_sidebar(runs) -> None:
         if selected != current:
             st.session_state.page = selected
             st.rerun()
-
-        st.markdown(
-            '<div class="sb-section" style="margin-top:18px">▸ UNIT GUIDE</div>',
-              unsafe_allow_html=True
-        )
-
-        st.markdown(
-            '<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:#c8d3ea;padding:0 16px;line-height:1.9">'
-            '🛢️ Oil → per barrel (159 L)<br>'
-            '🥇 Gold → per troy oz (31g)<br>'
-            '🌾 Wheat → per bushel (27kg)<br>'
-            '🔥 Gas → per MMBtu</div>',
-            unsafe_allow_html=True,
-        )
-
-        # Severity legend
-        st.markdown(
-            '<div class="sb-section" style="margin-top:14px">▸ SEVERITY</div>', 
-            unsafe_allow_html=True
-        )
-
-        for sev, col in SEV_COLORS.items():
-            st.markdown(
-                f'<div style="font-family:IBM Plex Mono,monospace;font-size:10px;color:{col};padding:2px 16px">■ {sev.upper()}</div>',
-                unsafe_allow_html=True,
-            )

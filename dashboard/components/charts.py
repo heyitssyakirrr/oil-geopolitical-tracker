@@ -75,18 +75,20 @@ def price_history_chart(
         ))
 
     if show_ev and events is not None:
+        added_sevs = set()
         for _, e in events.iterrows():
             if start_dt <= e["date"] <= end_dt:
                 c  = SEV_COLORS.get(e["severity"], "#888")
                 dm = int(pd.Timestamp(e["date"]).timestamp() * 1000)
-                label = e["event"][:28] + ("…" if len(e["event"]) > 28 else "")
-                fig.add_vline(
-                    x=dm, line_dash="dot", line_color=c, line_width=1.2,
-                    annotation_text=label,
-                    annotation_position="top left",
-                    annotation_font_size=8,
-                    annotation_font_color=c,
-                )
+                fig.add_vline(x=dm, line_dash="dot", line_color=c, line_width=1.2)
+                if e["severity"] not in added_sevs:
+                    fig.add_trace(go.Scatter(
+                        x=[None], y=[None], mode="markers",
+                        marker=dict(color=c, size=9, symbol="line-ns-open", line=dict(width=2, color=c)),
+                        name=f"Event: {e['severity'].title()}",
+                        showlegend=True,
+                    ))
+                    added_sevs.add(e["severity"])
 
     fig.update_layout(**base_layout(
         height=height,

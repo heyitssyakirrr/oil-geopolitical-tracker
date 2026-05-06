@@ -29,5 +29,12 @@ PAGE_RENDERERS = {
     "Pipeline": lambda: pipeline.render(runs),
 }
 
+st.markdown(
+    '<div class="dash-global-title">'
+    '🛢️ WAR &amp; OIL TRACKER &nbsp;·&nbsp; GEOPOLITICAL COMMODITY DASHBOARD'
+    '</div>',
+    unsafe_allow_html=True,
+)
+
 renderer = PAGE_RENDERERS.get(st.session_state.page, PAGE_RENDERERS["Overview"])
 renderer()

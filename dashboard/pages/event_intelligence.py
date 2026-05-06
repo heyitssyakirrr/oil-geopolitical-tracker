@@ -54,11 +54,19 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
         st.markdown("</div>", unsafe_allow_html=True)
         return
 
-    c1, c2 = st.columns([3, 2])
+    c1, c2 = st.columns([4, 2])
     with c1:
         table_df = pd.DataFrame(impact_rows).drop(columns=["_pct", "_sev", "_date"])
-        st.dataframe(table_df, use_container_width=True, hide_index=True, height=360)
-
+        st.dataframe(
+            table_df,
+            use_container_width=True,
+            hide_index=True,
+            height=360,
+            column_config={
+                "Event": st.column_config.TextColumn("Event", width="large"),
+            }
+        )
+        
     with c2:
         st.plotly_chart(severity_avg_bar(impact_rows), use_container_width=True)
 

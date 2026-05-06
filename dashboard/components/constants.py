@@ -69,7 +69,7 @@ PAGES = [
 # Chart theme
 PLOT_BG  = "rgba(0,0,0,0)"
 GRID_CLR = "rgba(255,255,255,0.04)"
-FONT_CLR = "#9ba3b5"
+FONT_CLR = "#b8c4d8"
 
 # Derived maps (computed once here, imported everywhere)
 label_map = {k: v["label"] for k, v in COMMODITY_META.items()}
