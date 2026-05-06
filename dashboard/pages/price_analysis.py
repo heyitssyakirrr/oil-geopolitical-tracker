@@ -16,6 +16,31 @@ from components import (
 )
 
 
+def _prepare_price_analysis_frame(df: pd.DataFrame) -> pd.DataFrame:
+    """Ensure required columns exist for chart rendering and derive safe fallbacks."""
+    out = df.sort_values("date").copy()
+
+    if "open" not in out:
+        out["open"] = out["close"].shift(1).fillna(out["close"])
+    if "high" not in out:
+        out["high"] = out[["open", "close"]].max(axis=1)
+    if "low" not in out:
+        out["low"] = out[["open", "close"]].min(axis=1)
+
+    if "daily_return_pct" not in out:
+        out["daily_return_pct"] = out["close"].pct_change(fill_method=None) * 100
+    if "volatility_30d" not in out:
+        out["volatility_30d"] = out["daily_return_pct"].rolling(30, min_periods=5).std()
+    if "daily_range" not in out:
+        out["daily_range"] = (out["high"] - out["low"]).abs()
+    if "rolling_7d_avg" not in out:
+        out["rolling_7d_avg"] = out["close"].rolling(7, min_periods=1).mean()
+    if "rolling_30d_avg" not in out:
+        out["rolling_30d_avg"] = out["close"].rolling(30, min_periods=1).mean()
+
+    return out
+
+
 def render(prices: pd.DataFrame, _events=None) -> None:
     filters  = render_filter_bar("pa", prices, show_events_toggle=False, show_ma_toggle=True)
     sel_com  = filters.commodity
@@ -30,6 +55,7 @@ def render(prices: pd.DataFrame, _events=None) -> None:
         & (prices["date"] >= start_dt)
         & (prices["date"] <= end_dt)
     ].copy()
+    filtered = _prepare_price_analysis_frame(filtered)
 
     st.markdown('<div class="main-content">', unsafe_allow_html=True)
     st.markdown(

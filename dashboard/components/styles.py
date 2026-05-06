@@ -20,9 +20,23 @@ header[data-testid="stHeader"] { display: none !important; }
     width: 15vw !important;
     min-width: 240px !important;
     max-width: 280px !important;
+    padding: 0 !important;
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 [data-testid="stSidebarNav"] { display: none !important; }
+
+/* Fully hide sidebar panel when collapsed to avoid phantom scrollbar rail */
+[data-testid="stSidebar"][aria-expanded="false"] {
+    min-width: 0 !important;
+    width: 0 !important;
+    border-right: none !important;
+    overflow: hidden !important;
+}
+[data-testid="stSidebar"][aria-expanded="false"] > div {
+    width: 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
 
 /* Collapsed sidebar toggle button */
 [data-testid="collapsedControl"] {

@@ -102,6 +102,23 @@ def price_history_chart(
 
 def candlestick_chart(filtered: pd.DataFrame, meta: dict, show_ma: bool = True, height: int = 420) -> go.Figure:
     """OHLC candlestick with optional moving average overlays."""
+    candle_hover = [
+        (
+            f"<b>{d:%d %b %Y}</b><br>"
+            f"Open:  ${o:.2f}<br>"
+            f"High:  ${h:.2f}<br>"
+            f"Low:   ${l:.2f}<br>"
+            f"Close: ${c:.2f}"
+        )
+        for d, o, h, l, c in zip(
+            filtered["date"],
+            filtered["open"],
+            filtered["high"],
+            filtered["low"],
+            filtered["close"],
+        )
+    ]
+
     fig = go.Figure(data=go.Candlestick(
         x=filtered["date"],
         open=filtered["open"],
@@ -112,14 +129,8 @@ def candlestick_chart(filtered: pd.DataFrame, meta: dict, show_ma: bool = True, 
         decreasing_line_color="#ef4444",
         increasing_fillcolor="rgba(34,197,94,0.25)",
         decreasing_fillcolor="rgba(239,68,68,0.25)",
-        customdata=list(zip(filtered["open"], filtered["high"], filtered["low"], filtered["close"])),
-        hovertemplate=(
-            "<b>%{x|%d %b %Y}</b><br>"
-            "Open:  $%{customdata[0]:.2f}<br>"
-            "High:  $%{customdata[1]:.2f}<br>"
-            "Low:   $%{customdata[2]:.2f}<br>"
-            "Close: $%{customdata[3]:.2f}<extra></extra>"
-        ),
+        hovertext=candle_hover,
+        hoverinfo="text",
     ))
 
     if show_ma:
