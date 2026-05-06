@@ -10,14 +10,16 @@ GLOBAL_CSS = """
 /* ── Base ─────────────────────────────────────────────── */
 html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
 .stApp { background: #0b0d11; color: #c8c2b8; }
-.block-container { padding: 0 !important; max-width: 100% !important; }
+.block-container { padding: 0.4rem 0.9rem 0.8rem 0.9rem !important; max-width: 100% !important; }
 header[data-testid="stHeader"] { display: none !important; }
 
 /* ── Sidebar ──────────────────────────────────────────── */
 [data-testid="stSidebar"] {
     background: #0e1017 !important;
     border-right: 1px solid #1c2030 !important;
-    min-width: 220px !important;
+    width: 15vw !important;
+    min-width: 240px !important;
+    max-width: 280px !important;
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 [data-testid="stSidebarNav"] { display: none !important; }
@@ -33,11 +35,12 @@ header[data-testid="stHeader"] { display: none !important; }
 
 /* Keep sidebar visually stable: hide close button so layout doesn't collapse away */
 button[data-testid="stSidebarCollapseButton"] { display: none !important; }
+
 /* ── Main content ─────────────────────────────────────── */
-.main-content { padding: 0 2rem 3rem 2rem; max-width: 1380px; margin: 0 auto; }
+.main-content { padding: 1rem 2.6rem 3.2rem 2.6rem; max-width: 14200px; margin: 0 auto; }
 
 /* ── Page header ──────────────────────────────────────── */
-.page-header { padding: 28px 0 8px 0; border-bottom: 1px solid #1c2030; margin-bottom: 20px; }
+.page-header { padding: 20px 0 10px 0; border-bottom: 1px solid #1c2030; margin-bottom: 24px; }
 .page-title  { font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; letter-spacing: 0.12em; color: #e8e2d8; line-height: 1; margin: 0; display: flex; align-items: center; gap: 12px; }
 .page-subtitle { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #e25c2e; letter-spacing: 0.22em; text-transform: uppercase; margin-top: 5px; }
 
@@ -184,5 +187,10 @@ label[data-testid="stWidgetLabel"] p {
 }
 .stCheckbox label span { color: #9ba3b5 !important; font-size: 12px !important; }
 .stCheckbox label span p { color: #9ba3b5 !important; }
+
+/* Keep breathing room between sidebar and content */
+[data-testid="stSidebar"] + section.main .block-container {
+    padding-left: 1.4rem !important;
+}
 </style>
 """

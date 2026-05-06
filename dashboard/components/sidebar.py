@@ -1,7 +1,6 @@
 """
 Sidebar navigation component.
-Call render_sidebar() from app.py — it returns nothing but sets
-st.session_state.page on button clicks.
+Call render_sidebar() from app.py — updates st.session_state.page.
 """
 
 import streamlit as st
