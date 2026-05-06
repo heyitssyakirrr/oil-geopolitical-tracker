@@ -26,11 +26,13 @@ header[data-testid="stHeader"] { display: none !important; }
 [data-testid="collapsedControl"] {
     background: #0e1017 !important;
     border-right: 1px solid #1c2030 !important;
-    color: #e25c2e !important;
+    color: #ff8a4c !important;
     top: 50% !important;
 }
-[data-testid="collapsedControl"] svg { fill: #e25c2e !important; }
+[data-testid="collapsedControl"] svg { fill: #ff8a4c !important; }
 
+/* Keep sidebar visually stable: hide close button so layout doesn't collapse away */
+button[data-testid="stSidebarCollapseButton"] { display: none !important; }
 /* ── Main content ─────────────────────────────────────── */
 .main-content { padding: 0 2rem 3rem 2rem; max-width: 1380px; margin: 0 auto; }
 
@@ -59,17 +61,17 @@ header[data-testid="stHeader"] { display: none !important; }
     height: 120px; box-sizing: border-box;
     display: flex; flex-direction: column; justify-content: space-between;
 }
-.kpi-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7894; letter-spacing: 0.18em; text-transform: uppercase; }
+.kpi-label { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #a5b4cf; letter-spacing: 0.18em; text-transform: uppercase; }
 .kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: #e8e2d8; letter-spacing: 0.04em; line-height: 1; }
 .kpi-delta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; }
 .kpi-delta.up   { color: #ef4444; }
 .kpi-delta.down { color: #22c55e; }
-.kpi-delta.neu  { color: #8890a4; }
+.kpi-delta.neu  { color: #C2cde0; }
 .kpi-note { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #4b5570; margin-top: 3px; }
 
 /* ── Section headings ─────────────────────────────────── */
 .sec-head { font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; letter-spacing: 0.1em; color: #e8e2d8; border-bottom: 1px solid #1c2030; padding-bottom: 5px; margin: 24px 0 4px; }
-.sec-sub  { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #6b7894; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
+.sec-sub  { font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #a5b4cf; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 14px; }
 
 /* ── Alerts ───────────────────────────────────────────── */
 .alert { padding: 10px 14px; border-radius: 2px; border-left: 3px solid; font-size: 12.5px; margin-bottom: 8px; line-height: 1.5; }
@@ -99,7 +101,7 @@ header[data-testid="stHeader"] { display: none !important; }
 }
 .sb-nav-item {
     font-family: 'IBM Plex Mono', monospace; font-size: 12px;
-    color: #8890a4; padding: 10px 14px; letter-spacing: 0.06em;
+    color: #C2cde0; padding: 10px 14px; letter-spacing: 0.06em;
     border-left: 3px solid transparent;
     display: flex; align-items: center; gap: 6px;
     transition: all 0.15s ease;
@@ -109,7 +111,7 @@ header[data-testid="stHeader"] { display: none !important; }
 div[data-testid="stButton"] > button {
     width: 100%; background: transparent !important; border: none !important;
     border-left: 3px solid transparent !important; border-radius: 0 !important;
-    color: #8890a4 !important; font-family: 'IBM Plex Mono', monospace !important;
+    color: #C2cde0 !important; font-family: 'IBM Plex Mono', monospace !important;
     font-size: 12px !important; letter-spacing: 0.06em !important;
     text-align: left !important; padding: 10px 14px !important;
     transition: all 0.15s ease !important; line-height: 1.4 !important;
@@ -123,9 +125,39 @@ div[data-testid="stButton"] > button:focus {
     box-shadow: none !important; outline: none !important;
 }
 
+/* ── Sidebar radio navigation ───────────────────────── */
+div[role="radiogroup"] label[data-baseweb="radio"] {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {
+    display: none !important;
+}
+div[role="radiogroup"] label[data-baseweb="radio"] > div:last-child {
+    width: 100% !important;
+    padding: 11px 14px 11px 18px !important;
+    border-left: 3px solid transparent !important;
+    border-radius: 0 !important;
+    color: #d9e3f3 !important;
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 12px !important;
+    letter-spacing: 0.02em !important;
+    line-height: 1.35 !important;
+}
+div[role="radiogroup"] label[data-baseweb="radio"]:hover > div:last-child {
+    background: #13161f !important;
+    border-left-color: #ff8a4c !important;
+}
+div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] > div:last-child {
+    background: #151a27 !important;
+    border-left-color: #ff8a4c !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+}
+
 /* ── Table styles ─────────────────────────────────────── */
 .stDataFrame thead tr th {
-    background: #0b0d11 !important; color: #6b7894 !important;
+    background: #0b0d11 !important; color: #a5b4cf !important;
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 10px !important; letter-spacing: 0.1em;
     text-transform: uppercase; border-bottom: 1px solid #1c2030 !important;
@@ -146,7 +178,7 @@ div[data-testid="stButton"] > button:focus {
     font-size: 12px !important; border-radius: 3px !important;
 }
 label[data-testid="stWidgetLabel"] p {
-    color: #6b7894 !important; font-size: 10px !important;
+    color: #a5b4cf !important; font-size: 10px !important;
     font-family: 'IBM Plex Mono', monospace !important;
     letter-spacing: 0.1em; text-transform: uppercase;
 }
