@@ -1,18 +1,25 @@
 """
-Overview page — spot price, KPI cards, price history chart.
+Overview page — cross-category summary + selected commodity KPIs + price history.
 """
+
+from __future__ import annotations
 
 import pandas as pd
 import streamlit as st
 
 from components import (
-    COMMODITY_META, SEV_COLORS,
+    CATEGORIES,
+    CATEGORY_COMMODITIES,
+    COMMODITY_META,
+    label_map,
     render_filter_bar,
     price_history_chart,
+    overview_normalized_chart,
 )
 
 
-def _kpi_card(label: str, value: str, delta: str = "", note: str = "", delta_cls: str = "neu") -> str:
+def _kpi_card(label: str, value: str, delta: str = "",
+               note: str = "", delta_cls: str = "neu") -> str:
     return (
         f'<div class="kpi-card">'
         f'<div class="kpi-label">{label}</div>'
@@ -23,8 +30,52 @@ def _kpi_card(label: str, value: str, delta: str = "", note: str = "", delta_cls
     )
 
 
+def _category_summary_cards(prices: pd.DataFrame, end_dt) -> str:
+    """
+    Renders 4 category summary cards showing the avg 30-day return
+    across all commodities in each category.
+    """
+    html = '<div class="cat-grid">'
+    for cat_key, cat_meta in CATEGORIES.items():
+        commodities = CATEGORY_COMMODITIES.get(cat_key, [])
+        cat_prices  = prices[
+            (prices["commodity_name"].isin(commodities))
+            & (prices["date"] <= end_dt)
+        ]
+        if cat_prices.empty:
+            continue
+
+        # Avg period return across commodities in this category
+        returns = []
+        for com in commodities:
+            sub = cat_prices[cat_prices["commodity_name"] == com].sort_values("date")
+            if len(sub) >= 2:
+                r = (sub["close"].iloc[-1] - sub["close"].iloc[0]) / sub["close"].iloc[0] * 100
+                returns.append(r)
+
+        avg_return = sum(returns) / len(returns) if returns else 0
+        sign       = "+" if avg_return >= 0 else ""
+        chg_color  = "#ef4444" if avg_return > 0 else "#22c55e"
+
+        com_labels = " · ".join(
+            label_map.get(c, c) for c in commodities[:3]
+        ) + (" · …" if len(commodities) > 3 else "")
+
+        html += (
+            f'<div class="cat-card">'
+            f'<div class="cat-icon">{cat_meta["icon"]}</div>'
+            f'<div class="cat-name">{cat_meta["label"].upper()}</div>'
+            f'<div class="cat-count">{len(commodities)} commodities · {com_labels}</div>'
+            f'<div class="cat-change" style="color:{chg_color}">'
+            f'{sign}{avg_return:.1f}% avg period return</div>'
+            f'</div>'
+        )
+    html += '</div>'
+    return html
+
+
 def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
-    filters = render_filter_bar("ov", prices, show_ma_toggle=True)
+    filters  = render_filter_bar("ov", prices, show_ma_toggle=True)
     sel_com  = filters.commodity
     start_dt = filters.start_dt
     end_dt   = filters.end_dt
@@ -40,21 +91,40 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
 
     st.markdown('<div class="main-content">', unsafe_allow_html=True)
 
-    # Header
+    # ── Page header ───────────────────────────────────────────────────────────
     st.markdown(
         f'<div class="page-header">'
         f'<div class="page-title">{meta.get("icon","🛢️")} OVERVIEW — {meta.get("label","")}</div>'
-        f'<div class="page-subtitle">▸ {meta.get("unit","")} · Geopolitical Commodity Tracker · Updated daily</div>'
+        f'<div class="page-subtitle">'
+        f'▸ {meta.get("unit","")} · Geopolitical Commodity Tracker · Updated daily'
+        f'</div>'
         f'</div>',
         unsafe_allow_html=True,
     )
 
-    # War signal banner
+    # ── War signal banner ─────────────────────────────────────────────────────
     st.markdown(
-        f'<div class="alert alert-red"><strong>⚡ WAR SIGNAL:</strong> {meta.get("war_signal","")}</div>',
+        f'<div class="alert alert-red">'
+        f'<strong>⚡ WAR SIGNAL:</strong> {meta.get("war_signal","")}'
+        f'</div>',
         unsafe_allow_html=True,
     )
 
+    # ── Category summary cards ────────────────────────────────────────────────
+    st.markdown('<div class="sec-head">Market Overview by Category</div>',
+                unsafe_allow_html=True)
+    st.markdown(
+        '<div class="sec-sub">'
+        'Average period return across all commodities in each category'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+    window_prices = prices[
+        (prices["date"] >= start_dt) & (prices["date"] <= end_dt)
+    ]
+    st.markdown(_category_summary_cards(window_prices, end_dt), unsafe_allow_html=True)
+
+    # ── Summary alerts + KPI cards ────────────────────────────────────────────
     if not filtered.empty:
         latest_vol = filtered["volatility_30d"].iloc[-1]
         avg_vol    = filtered["volatility_30d"].mean()
@@ -72,7 +142,6 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
             if len(filtered) > 1 else 0
         )
 
-        # Summary alerts
         a1, a2, a3 = st.columns(3)
         with a1:
             cls  = "alert-red" if vol_pct > 30 else ("alert-amber" if vol_pct > 10 else "alert-green")
@@ -99,7 +168,6 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
                 unsafe_allow_html=True,
             )
 
-        # KPI cards
         latest  = filtered.iloc[-1]
         prev    = filtered.iloc[-2] if len(filtered) > 1 else latest
         delta   = latest["close"] - prev["close"]
@@ -119,21 +187,38 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
                 f"≈ ${per_l:.3f}/litre" if per_l else meta.get("unit", ""),
                 d_cls,
             )
-            + _kpi_card("7-Day Average",   f"${latest['rolling_7d_avg']:.2f}",  "", "Short-term trend")
-            + _kpi_card("30-Day Average",  f"${latest['rolling_30d_avg']:.2f}", "", "Medium-term baseline")
+            + _kpi_card("7-Day Average",   f"${latest['rolling_7d_avg']:.2f}",
+                        "", "Short-term trend")
+            + _kpi_card("30-Day Average",  f"${latest['rolling_30d_avg']:.2f}",
+                        "", "Medium-term baseline")
             + _kpi_card(
-                "vs 30-Day Avg",
-                f"{vs:+.1f}%",
-                "",
+                "vs 30-Day Avg", f"{vs:+.1f}%", "",
                 "Above avg → demand pressure" if vs > 0 else "Below avg → supply surplus",
                 "up" if vs > 0 else "down",
             )
-            + _kpi_card("30-Day Volatility", f"{latest['volatility_30d']:.2f}", "", "Higher = more uncertainty")
+            + _kpi_card("30-Day Volatility", f"{latest['volatility_30d']:.2f}",
+                        "", "Higher = more uncertainty")
             + '</div>',
             unsafe_allow_html=True,
         )
 
-    # Price history chart
+    # ── All-commodity normalized chart ────────────────────────────────────────
+    st.markdown('<div class="sec-head">All Commodities — Normalized</div>',
+                unsafe_allow_html=True)
+    st.markdown(
+        '<div class="sec-sub">'
+        'All 13 commodities indexed to 100 at period start · '
+        'Vertical lines = geopolitical events'
+        '</div>',
+        unsafe_allow_html=True,
+    )
+    if not window_prices.empty:
+        st.plotly_chart(
+            overview_normalized_chart(prices, events, start_dt, end_dt, show_ev),
+            use_container_width=True,
+        )
+
+    # ── Selected commodity price history ──────────────────────────────────────
     st.markdown('<div class="sec-head">Price History</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="sec-sub">'
@@ -142,9 +227,10 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
         '</div>',
         unsafe_allow_html=True,
     )
-
     if not filtered.empty:
-        fig = price_history_chart(filtered, events, meta, start_dt, end_dt, show_ma, show_ev)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(
+            price_history_chart(filtered, events, meta, start_dt, end_dt, show_ma, show_ev),
+            use_container_width=True,
+        )
 
     st.markdown('</div>', unsafe_allow_html=True)

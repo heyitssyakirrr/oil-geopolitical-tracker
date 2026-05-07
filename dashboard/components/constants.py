@@ -186,6 +186,9 @@ PAGES = [
     ("🐄",  "Livestock"),
     ("📊",  "Macro"),
     ("🔗",  "Ripple Effects"),
+    ("💥",  "Event Intelligence"),
+    ("📈",  "Price Analysis"),
+    ("🔄",  "Comparison"),
     ("🔧",  "Pipeline"),
 ]
 
@@ -204,7 +207,7 @@ color_map    = {k: v["color"]    for k, v in COMMODITY_META.items()}
 category_map = {k: v["category"] for k, v in COMMODITY_META.items()}
 
 # Commodities grouped by category
-CATEGORY_COMMODITIES = {}
+CATEGORY_COMMODITIES: dict[str, list[str]] = {}
 for com, meta in COMMODITY_META.items():
     cat = meta["category"]
     CATEGORY_COMMODITIES.setdefault(cat, []).append(com)

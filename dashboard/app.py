@@ -1,7 +1,18 @@
 import streamlit as st
 
 from components import GLOBAL_CSS, load_events, load_prices, load_runs, render_sidebar
-from pages import commodity_comparison, event_intelligence, overview, pipeline, price_analysis
+from pages import (
+    overview,
+    energy,
+    agriculture,
+    livestock,
+    macro,
+    ripple_effects,
+    event_intelligence,
+    price_analysis,
+    commodity_comparison,
+    pipeline,
+)
 
 st.set_page_config(
     page_title="War & Oil Tracker",
@@ -17,16 +28,25 @@ if "page" not in st.session_state:
 
 prices = load_prices()
 events = load_events()
-runs = load_runs()
+runs   = load_runs()
 
 render_sidebar(runs)
 
 PAGE_RENDERERS = {
-    "Overview": lambda: overview.render(prices, events),
-    "Price Analysis": lambda: price_analysis.render(prices, events),
+    # Main
+    "Overview":           lambda: overview.render(prices, events),
+    # By category
+    "Energy":             lambda: energy.render(prices, events),
+    "Agriculture":        lambda: agriculture.render(prices, events),
+    "Livestock":          lambda: livestock.render(prices, events),
+    "Macro":              lambda: macro.render(prices, events),
+    # Analysis
+    "Ripple Effects":     lambda: ripple_effects.render(prices, events),
     "Event Intelligence": lambda: event_intelligence.render(prices, events),
-    "Commodity Comparison": lambda: commodity_comparison.render(prices, events),
-    "Pipeline": lambda: pipeline.render(runs),
+    "Price Analysis":     lambda: price_analysis.render(prices, events),
+    "Comparison":         lambda: commodity_comparison.render(prices, events),
+    # System
+    "Pipeline":           lambda: pipeline.render(runs),
 }
 
 st.markdown(

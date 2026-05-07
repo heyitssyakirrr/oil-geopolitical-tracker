@@ -274,10 +274,10 @@ def category_price_chart(
             name=meta.get("label", com),
             line=dict(color=meta.get("color", "#888"), width=2),
             hovertemplate=(
-                f"<b>%{{x|%d %b %Y}}</b><br>"
-                f"{meta.get('label',com)}: ${{customdata[0]:.2f}}"
-                f" ({meta.get('unit_short','')})<br>"
-                f"Index: %{{customdata[1]:.1f}}<extra></extra>"
+                "<b>%{x|%d %b %Y}</b><br>"
+                + meta.get('label', com) + ": $%{customdata[0]:.2f}"
+                + " (" + meta.get('unit_short', '') + ")<br>"
+                + "Index: %{customdata[1]:.1f}<extra></extra>"
             ),
         ))
 
@@ -605,9 +605,9 @@ def overview_normalized_chart(
             name=meta.get("label", com),
             line=dict(color=meta.get("color", "#888"), width=1.5),
             hovertemplate=(
-                f"<b>%{{x|%d %b %Y}}</b><br>"
-                f"{meta.get('label',com)}: ${{customdata[0]:.2f}}<br>"
-                f"Index: %{{customdata[1]:.1f}}<extra></extra>"
+                "<b>%{x|%d %b %Y}</b><br>"
+                + meta.get('label', com) + ": $%{customdata[0]:.2f}<br>"
+                + "Index: %{customdata[1]:.1f}<extra></extra>"
             ),
         ))
 
@@ -639,3 +639,7 @@ def _hex_to_rgb(hex_color: str) -> str:
         h = "".join(c * 2 for c in h)
     r, g, b = int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16)
     return f"{r},{g},{b}"
+
+
+# Alias — commodity_comparison page expects this name
+normalized_comparison_chart = overview_normalized_chart

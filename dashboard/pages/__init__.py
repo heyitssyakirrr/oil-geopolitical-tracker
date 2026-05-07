@@ -1,9 +1,26 @@
-from . import commodity_comparison, event_intelligence, overview, pipeline, price_analysis
+"""Dashboard pages package."""
+from . import (
+    overview,
+    energy,
+    agriculture,
+    livestock,
+    macro,
+    ripple_effects,
+    event_intelligence,
+    price_analysis,
+    commodity_comparison,
+    pipeline,
+)
 
 __all__ = [
     "overview",
-    "price_analysis",
+    "energy",
+    "agriculture",
+    "livestock",
+    "macro",
+    "ripple_effects",
     "event_intelligence",
+    "price_analysis",
     "commodity_comparison",
     "pipeline",
 ]

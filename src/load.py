@@ -75,10 +75,18 @@ def init_schema(engine):
         );
     """
 
+    # Migration: add columns introduced after initial schema
+    migrations = [
+        "ALTER TABLE commodity_prices ADD COLUMN IF NOT EXISTS category TEXT;",
+        "ALTER TABLE geopolitical_events ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'geopolitical';",
+    ]
+
     with engine.connect() as conn:
         conn.execute(text(create_prices_table))
         conn.execute(text(create_events_table))
         conn.execute(text(create_pipeline_runs_table))
+        for migration in migrations:
+            conn.execute(text(migration))
         conn.commit()
 
     logger.info("Schema initialised — all tables ready")
@@ -94,31 +102,35 @@ def load_prices(df: pd.DataFrame, engine) -> int:
     """
     staging = "commodity_prices_staging"
 
-    with engine.connect() as conn:
-        df.to_sql(staging, conn, if_exists="replace", index=False)
+    upsert_sql = f"""
+        INSERT INTO commodity_prices (
+            date, ticker, commodity_name, category,
+            open, high, low, close, volume,
+            daily_return_pct, rolling_7d_avg, rolling_30d_avg,
+            volatility_30d, price_vs_30d_avg_pct,
+            daily_range, daily_range_pct
+        )
+        SELECT
+            date, ticker, commodity_name, category,
+            open, high, low, close, volume,
+            daily_return_pct, rolling_7d_avg, rolling_30d_avg,
+            volatility_30d, price_vs_30d_avg_pct,
+            daily_range, daily_range_pct
+        FROM {staging}
+        ON CONFLICT (date, ticker) DO NOTHING;
+    """
 
-        upsert_sql = f"""
-            INSERT INTO commodity_prices (
-                date, ticker, commodity_name, category,
-                open, high, low, close, volume,
-                daily_return_pct, rolling_7d_avg, rolling_30d_avg,
-                volatility_30d, price_vs_30d_avg_pct,
-                daily_range, daily_range_pct
-            )
-            SELECT
-                date, ticker, commodity_name, category,
-                open, high, low, close, volume,
-                daily_return_pct, rolling_7d_avg, rolling_30d_avg,
-                volatility_30d, price_vs_30d_avg_pct,
-                daily_range, daily_range_pct
-            FROM {staging}
-            ON CONFLICT (date, ticker) DO NOTHING;
-        """
-        result = conn.execute(text(upsert_sql))
+    with engine.connect() as conn:
+        before = conn.execute(text("SELECT COUNT(*) FROM commodity_prices")).scalar()
+
+        df.to_sql(staging, conn, if_exists="replace", index=False)
+        conn.execute(text(upsert_sql))
         conn.execute(text(f"DROP TABLE IF EXISTS {staging}"))
         conn.commit()
 
-    rows = result.rowcount
+        after = conn.execute(text("SELECT COUNT(*) FROM commodity_prices")).scalar()
+
+    rows = after - before
     logger.info(f"Prices loaded — {rows} new rows inserted")
     return rows
 
