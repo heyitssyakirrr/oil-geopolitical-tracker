@@ -9,13 +9,7 @@ logger = get_logger(__name__)
 
 
 def get_engine():
-    """
-    Creates and returns a SQLAlchemy engine using credentials from .env file.
-    Called once and reused across all load functions.
-
-    Returns:
-        SQLAlchemy engine connected to the oil_tracker database
-    """
+    """Creates and returns a SQLAlchemy engine from .env credentials."""
     db_url = (
         f"postgresql+psycopg2://"
         f"{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
@@ -28,12 +22,12 @@ def get_engine():
 def init_schema(engine):
     """
     Creates all required tables if they do not already exist.
-    Safe to run multiple times — will never overwrite existing data.
+    Safe to re-run — never overwrites existing data.
 
-    Tables created:
-        commodity_prices    : stores all OHLCV data + derived metrics
-        geopolitical_events : stores conflict events with severity level
-        pipeline_runs       : tracks every pipeline execution for monitoring
+    Tables:
+        commodity_prices    — OHLCV + derived metrics, includes category column
+        geopolitical_events — events with severity and optional category
+        pipeline_runs       — execution history for monitoring
     """
     create_prices_table = """
         CREATE TABLE IF NOT EXISTS commodity_prices (
@@ -41,6 +35,7 @@ def init_schema(engine):
             date                 DATE NOT NULL,
             ticker               TEXT NOT NULL,
             commodity_name       TEXT NOT NULL,
+            category             TEXT,
             open                 NUMERIC(12, 4),
             high                 NUMERIC(12, 4),
             low                  NUMERIC(12, 4),
@@ -64,6 +59,7 @@ def init_schema(engine):
             date      DATE NOT NULL,
             event     TEXT NOT NULL,
             severity  TEXT CHECK (severity IN ('low', 'medium', 'high', 'critical')),
+            category  TEXT DEFAULT 'geopolitical',
             UNIQUE (date, event)
         );
     """
@@ -90,81 +86,68 @@ def init_schema(engine):
 
 def load_prices(df: pd.DataFrame, engine) -> int:
     """
-    Loads cleaned and enriched price data into commodity_prices table.
-    Uses upsert logic — if a record with the same (date, ticker) already
-    exists, it is skipped. This makes the pipeline safe to run multiple
-    times without creating duplicates.
-
-    Args:
-        df:     Enriched DataFrame from run_transform()
-        engine: SQLAlchemy engine from get_engine()
+    Upserts enriched price data into commodity_prices.
+    Existing (date, ticker) pairs are skipped — safe to re-run.
 
     Returns:
         Number of new rows inserted
     """
-    staging_table = "commodity_prices_staging"
+    staging = "commodity_prices_staging"
 
     with engine.connect() as conn:
-        # Step 1 — write to a temporary staging table
-        df.to_sql(staging_table, conn, if_exists="replace", index=False)
+        df.to_sql(staging, conn, if_exists="replace", index=False)
 
-        # Step 2 — upsert from staging into main table
         upsert_sql = f"""
             INSERT INTO commodity_prices (
-                date, ticker, commodity_name,
+                date, ticker, commodity_name, category,
                 open, high, low, close, volume,
                 daily_return_pct, rolling_7d_avg, rolling_30d_avg,
                 volatility_30d, price_vs_30d_avg_pct,
                 daily_range, daily_range_pct
             )
             SELECT
-                date, ticker, commodity_name,
+                date, ticker, commodity_name, category,
                 open, high, low, close, volume,
                 daily_return_pct, rolling_7d_avg, rolling_30d_avg,
                 volatility_30d, price_vs_30d_avg_pct,
                 daily_range, daily_range_pct
-            FROM {staging_table}
+            FROM {staging}
             ON CONFLICT (date, ticker) DO NOTHING;
         """
         result = conn.execute(text(upsert_sql))
-        conn.execute(text(f"DROP TABLE IF EXISTS {staging_table}"))
+        conn.execute(text(f"DROP TABLE IF EXISTS {staging}"))
         conn.commit()
 
-    rows_inserted = result.rowcount
-    logger.info(f"Prices loaded — {rows_inserted} new rows inserted (duplicates skipped)")
-    return rows_inserted
+    rows = result.rowcount
+    logger.info(f"Prices loaded — {rows} new rows inserted")
+    return rows
 
 
 def load_events(df: pd.DataFrame, engine) -> int:
     """
-    Loads geopolitical events into geopolitical_events table.
-    Uses upsert logic — existing events are never duplicated.
-
-    Args:
-        df:     Events DataFrame from get_events_dataframe()
-        engine: SQLAlchemy engine from get_engine()
+    Upserts geopolitical events. Existing (date, event) pairs are skipped.
 
     Returns:
         Number of new rows inserted
     """
-    staging_table = "geopolitical_events_staging"
+    staging = "geopolitical_events_staging"
 
     with engine.connect() as conn:
-        df.to_sql(staging_table, conn, if_exists="replace", index=False)
+        df.to_sql(staging, conn, if_exists="replace", index=False)
 
         upsert_sql = f"""
-            INSERT INTO geopolitical_events (date, event, severity)
-            SELECT date, event, severity
-            FROM {staging_table}
+            INSERT INTO geopolitical_events (date, event, severity, category)
+            SELECT date, event, severity, category
+            FROM {staging}
             ON CONFLICT (date, event) DO NOTHING;
         """
         result = conn.execute(text(upsert_sql))
-        conn.execute(text(f"DROP TABLE IF EXISTS {staging_table}"))
+        conn.execute(text(f"DROP TABLE IF EXISTS {staging}"))
         conn.commit()
 
-    rows_inserted = result.rowcount
-    logger.info(f"Events loaded — {rows_inserted} new rows inserted")
-    return rows_inserted
+    rows = result.rowcount
+    logger.info(f"Events loaded — {rows} new rows inserted")
+    return rows
 
 
 def log_pipeline_run(
@@ -173,21 +156,9 @@ def log_pipeline_run(
     finished_at,
     status: str,
     rows_loaded: int = 0,
-    error_message: str = None
+    error_message: str = None,
 ):
-    """
-    Records the result of every pipeline execution into pipeline_runs table.
-    This gives you a history of when the pipeline ran, whether it succeeded,
-    and how many rows were loaded — essential for monitoring.
-
-    Args:
-        engine:        SQLAlchemy engine
-        started_at:    datetime when pipeline started
-        finished_at:   datetime when pipeline finished
-        status:        'success' or 'failed'
-        rows_loaded:   number of rows inserted in this run
-        error_message: error details if status is 'failed'
-    """
+    """Records every pipeline execution result for monitoring."""
     sql = """
         INSERT INTO pipeline_runs
             (started_at, finished_at, status, rows_loaded, error_message)
@@ -200,7 +171,7 @@ def log_pipeline_run(
             "finished_at":   finished_at,
             "status":        status,
             "rows_loaded":   rows_loaded,
-            "error_message": error_message
+            "error_message": error_message,
         })
         conn.commit()
 
@@ -208,18 +179,7 @@ def log_pipeline_run(
 
 
 def run_load(enriched_df: pd.DataFrame, events_df: pd.DataFrame, engine) -> int:
-    """
-    Master load function — runs the full load pipeline.
-    Call this from main.py instead of calling individual functions.
-
-    Args:
-        enriched_df: Enriched prices DataFrame from run_transform()
-        events_df:   Events DataFrame from run_transform()
-        engine:      SQLAlchemy engine from get_engine()
-
-    Returns:
-        Total number of new rows inserted
-    """
+    """Master load: schema init → prices → events → return row count."""
     init_schema(engine)
     rows = load_prices(enriched_df, engine)
     load_events(events_df, engine)
