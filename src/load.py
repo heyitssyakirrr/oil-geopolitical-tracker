@@ -7,7 +7,7 @@ from src.utils import get_logger
 load_dotenv()
 logger = get_logger(__name__)
 
-'''
+
 def get_engine():
     """Creates and returns a SQLAlchemy engine from .env credentials."""
     db_url = (
@@ -20,29 +20,7 @@ def get_engine():
     )
     # create an object that knows how to connect to the database and execute SQL commands
     return create_engine(db_url) 
-'''
 
-def get_engine():
-    user     = os.getenv('DB_USER')
-    password = os.getenv('DB_PASSWORD')
-    host     = os.getenv('DB_HOST')
-    port     = os.getenv('DB_PORT')
-    name     = os.getenv('DB_NAME')
-
-    print(f"DB_USER={user}")
-    print(f"DB_PASSWORD={'SET' if password else 'EMPTY'}")
-    print(f"DB_HOST={host}")
-    print(f"DB_PORT='{port}' type={type(port)}")
-    print(f"DB_NAME={name}")
-
-    db_url = (
-        f"postgresql+psycopg2://"
-        f"{user}:{password}"
-        f"@{host}:{int(port or 5432)}"
-        f"/{name}"
-        f"?sslmode=require"
-    )
-    return create_engine(db_url)
 
 def init_schema(engine):
     """
