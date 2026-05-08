@@ -11,13 +11,15 @@ logger = get_logger(__name__)
 def get_engine():
     """Creates and returns a SQLAlchemy engine from .env credentials."""
     db_url = (
+        # psycopg2 is the PostgreSQL driver that SQLAlchemy uses to connect to the database
         f"postgresql+psycopg2://"
         f"{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}"
-        f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT', 5432)}"
+        f"@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT', '5432')}"
         f"/{os.getenv('DB_NAME')}"
+        f"?sslmode=require"
     )
-    return create_engine(db_url)
-
+    # create an object that knows how to connect to the database and execute SQL commands
+    return create_engine(db_url) 
 
 def init_schema(engine):
     """
@@ -49,9 +51,11 @@ def init_schema(engine):
             daily_range          NUMERIC(12, 4),
             daily_range_pct      NUMERIC(8,  2),
             loaded_at            TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE (date, ticker)
+            UNIQUE (date, ticker) 
         );
     """
+            # UNIQUE (date, ticker)
+            # no two rows can have the same date and ticker, ensures idempotency when upserting
 
     create_events_table = """
         CREATE TABLE IF NOT EXISTS geopolitical_events (
@@ -124,8 +128,8 @@ def load_prices(df: pd.DataFrame, engine) -> int:
         before = conn.execute(text("SELECT COUNT(*) FROM commodity_prices")).scalar()
 
         df.to_sql(staging, conn, if_exists="replace", index=False)
-        conn.execute(text(upsert_sql))
-        conn.execute(text(f"DROP TABLE IF EXISTS {staging}"))
+        conn.execute(text(upsert_sql)) # SQLAlchemy 2.0+ need text() for raw SQL
+        conn.execute(text(f"DROP TABLE IF EXISTS {staging}")) # clean up staging table after upsert
         conn.commit()
 
         after = conn.execute(text("SELECT COUNT(*) FROM commodity_prices")).scalar()
@@ -177,7 +181,10 @@ def log_pipeline_run(
         VALUES
             (:started_at, :finished_at, :status, :rows_loaded, :error_message)
     """
+    # parameterized query to prevent SQL injection and handle data types correctly
     with engine.connect() as conn:
+        # PostgreSQL will automatically convert Python datetime to SQL timestamp, and handle NULL for error_message if it's None
+        # PostgreSQL receives the parameters as a dictionary and binds them to the query safely
         conn.execute(text(sql), {
             "started_at":    started_at,
             "finished_at":   finished_at,

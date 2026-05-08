@@ -1,0 +1,188 @@
+extract.py:
+
+fetch_all_commodities() is called
+        │
+        ├── loop: commodity="brent_crude", ticker="BZ=F"
+        │       └── fetch_commodity_prices("BZ=F", ...) 
+        │               └── yf.download("BZ=F", ...)  → raw DataFrame
+        │               └── rename columns, add ticker column
+        │               └── return cleaned single-commodity DataFrame
+        │       └── add commodity_name and category columns
+        │       └── append to all_data list
+        │
+        ├── loop: commodity="wti_crude", ticker="CL=F"
+        │       └── same as above...
+        │
+        ├── ... (repeat 11 more times)
+        │
+        └── pd.concat(all_data) → one big combined DataFrame
+                └── returned to main.py
+
+transform.py:
+
+run_transform(raw_df) is called from main.py
+        │
+        ├── STEP 1: clean_prices(raw_df)
+        │       │
+        │       ├── dropna(subset=["close"])
+        │       │       └── removes any row where close price is missing
+        │       │
+        │       ├── drop_duplicates(subset=["date", "ticker"])
+        │       │       └── removes duplicate rows with same date + ticker combo
+        │       │
+        │       ├── filter df[df["close"] > 0]
+        │       │       └── removes rows where close is zero or negative
+        │       │
+        │       ├── cast column types
+        │       │       ├── df["date"]   → pd.to_datetime()
+        │       │       ├── df["open"]   → pd.to_numeric(errors="coerce")
+        │       │       ├── df["high"]   → pd.to_numeric(errors="coerce")
+        │       │       ├── df["low"]    → pd.to_numeric(errors="coerce")
+        │       │       ├── df["close"]  → pd.to_numeric(errors="coerce")
+        │       │       └── df["volume"] → pd.to_numeric(errors="coerce")
+        │       │                               └── .fillna(0).astype(int)
+        │       │
+        │       ├── sort_values(["ticker", "date"])
+        │       │       └── ensures each commodity is in chronological order
+        │       │           (required for rolling calculations to be correct)
+        │       │
+        │       └── return clean_df
+        │
+        ├── STEP 2: add_derived_metrics(clean_df)
+        │       │
+        │       ├── daily_return_pct
+        │       │       └── groupby("ticker")["close"]
+        │       │               └── .pct_change()
+        │       │                       └── (today - yesterday) / yesterday
+        │       │                       └── calculated within each ticker group only
+        │       │               └── .mul(100) → converts 0.10 to 10.0
+        │       │               └── .round(4)
+        │       │
+        │       ├── rolling_7d_avg
+        │       │       └── groupby("ticker")["close"]
+        │       │               └── .transform(lambda x: x.rolling(7, min_periods=1).mean())
+        │       │                       └── window slides across last 7 rows per ticker
+        │       │                       └── min_periods=1 → no NaN on early rows
+        │       │                       └── transform → result keeps original row index
+        │       │               └── .round(4)
+        │       │
+        │       ├── rolling_30d_avg
+        │       │       └── same pattern as rolling_7d_avg
+        │       │               └── window = 30 rows instead of 7
+        │       │
+        │       ├── volatility_30d
+        │       │       └── groupby("ticker")["close"]
+        │       │               └── .transform(lambda x: x.rolling(30, min_periods=1).std())
+        │       │                       └── std() instead of mean()
+        │       │                       └── high value = price jumping around = fearful market
+        │       │
+        │       ├── price_vs_30d_avg_pct
+        │       │       └── (df["close"] - df["rolling_30d_avg"])
+        │       │               └── .div(df["rolling_30d_avg"])
+        │       │               └── .mul(100)
+        │       │                       └── result: +15 means today is 15% above 30d average
+        │       │               └── .round(2)
+        │       │
+        │       ├── daily_range
+        │       │       └── df["high"] - df["low"]
+        │       │               └── how wide price swung within one trading day
+        │       │
+        │       ├── daily_range_pct
+        │       │       └── (daily_range / close) * 100
+        │       │               └── range expressed as % of price
+        │       │
+        │       └── return enriched_df
+        │
+        ├── STEP 3: get_events_dataframe()
+        │       │
+        │       ├── pd.read_csv("data/events.csv", parse_dates=["date"])
+        │       │       └── loads manually maintained conflict events file
+        │       │
+        │       ├── validate severity column
+        │       │       └── each value must be in {low, medium, high, critical}
+        │       │       └── raises ValueError immediately if anything else found
+        │       │
+        │       ├── add "category" column if missing
+        │       │       └── defaults to "geopolitical"
+        │       │
+        │       ├── sort_values("date")
+        │       │
+        │       └── return events_df
+        │
+        └── return (enriched_df, events_df) → back to main.py
+
+load.py
+
+run_load(enriched_df, events_df, engine) is called from main.py
+        │
+        ├── STEP 1: init_schema(engine)
+        │       │
+        │       ├── engine.connect() → opens connection to PostgreSQL
+        │       │
+        │       ├── CREATE TABLE IF NOT EXISTS commodity_prices
+        │       │       ├── id SERIAL PRIMARY KEY → auto-incrementing row ID
+        │       │       ├── date DATE NOT NULL
+        │       │       ├── ticker TEXT NOT NULL
+        │       │       ├── all OHLCV + derived metric columns
+        │       │       └── UNIQUE (date, ticker) → the constraint upsert relies on
+        │       │
+        │       ├── CREATE TABLE IF NOT EXISTS geopolitical_events
+        │       │       └── UNIQUE (date, event)
+        │       │
+        │       ├── CREATE TABLE IF NOT EXISTS pipeline_runs
+        │       │       └── stores status, rows_loaded, error_message per run
+        │       │
+        │       ├── run migrations
+        │       │       └── ALTER TABLE ... ADD COLUMN IF NOT EXISTS category
+        │       │               └── safe to run even if column already exists
+        │       │
+        │       └── conn.commit() → saves all DDL changes to database
+        │
+        ├── STEP 2: load_prices(enriched_df, engine)
+        │       │
+        │       ├── COUNT rows in commodity_prices before insert → "before"
+        │       │
+        │       ├── df.to_sql("commodity_prices_staging", if_exists="replace")
+        │       │       └── writes entire enriched_df into a temporary staging table
+        │       │       └── if_exists="replace" → drops and recreates staging each run
+        │       │       └── index=False → don't write pandas row numbers as a column
+        │       │
+        │       ├── INSERT INTO commodity_prices
+        │       │       SELECT * FROM commodity_prices_staging
+        │       │       ON CONFLICT (date, ticker) DO NOTHING
+        │       │               ├── new rows (today's data) → inserted
+        │       │               └── existing rows (all historical data) → silently skipped
+        │       │
+        │       ├── DROP TABLE commodity_prices_staging
+        │       │       └── staging table no longer needed, clean up
+        │       │
+        │       ├── conn.commit() → saves all changes permanently
+        │       │
+        │       ├── COUNT rows in commodity_prices after insert → "after"
+        │       │
+        │       ├── rows = after - before → how many rows were actually new today
+        │       │
+        │       └── return rows → passed up to main.py for logging
+        │
+        ├── STEP 3: load_events(events_df, engine)
+        │       │
+        │       ├── df.to_sql("geopolitical_events_staging", if_exists="replace")
+        │       │       └── same staging pattern as prices
+        │       │
+        │       ├── INSERT INTO geopolitical_events
+        │       │       SELECT * FROM geopolitical_events_staging
+        │       │       ON CONFLICT (date, event) DO NOTHING
+        │       │               └── same upsert logic, different unique constraint
+        │       │
+        │       ├── DROP TABLE geopolitical_events_staging
+        │       │
+        │       └── conn.commit()
+        │
+        └── return rows → back to main.py
+                └── main.py passes this to log_pipeline_run()
+                        ├── INSERT INTO pipeline_runs
+                        │       ├── started_at, finished_at
+                        │       ├── status = "success" or "failed"
+                        │       ├── rows_loaded = rows from load_prices()
+                        │       └── error_message = None if success, exception text if failed
+                        └── uses :named_params, not f-strings → prevents SQL injection

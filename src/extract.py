@@ -70,10 +70,10 @@ def fetch_commodity_prices(ticker_symbol: str, start_date: str, end_date: str) -
         if df.empty:
             raise ValueError(f"No data found for {ticker_symbol} between {start_date} and {end_date}")
 
-        df = df.reset_index()
-        df.columns = ["date", "open", "high", "low", "close", "volume"]
-        df["ticker"] = ticker_symbol
-        df["date"]   = pd.to_datetime(df["date"]).dt.date
+        df = df.reset_index() # at first date as index (id), then move date back to column and add new index
+        df.columns = ["date", "open", "high", "low", "close", "volume"] # rename the columns to lowercase
+        df["ticker"] = ticker_symbol # add new column at the end with the ticker symbol for later merging
+        df["date"]   = pd.to_datetime(df["date"]).dt.date # convert to date only (drop time) for consistency with events data
         logger.info(f"Fetched {len(df)} rows for {ticker_symbol}")
         return df
 
@@ -110,6 +110,6 @@ def fetch_all_commodities(start_date: str, end_date: str) -> pd.DataFrame:
     if not all_data:
         raise RuntimeError("No data fetched for any commodity — check tickers and network connection")
 
-    combined = pd.concat(all_data, ignore_index=True)
+    combined = pd.concat(all_data, ignore_index=True) # combine all commodity DataFrames into one, reset index
     logger.info(f"Combined fetch: {len(combined)} total rows across {len(all_data)} commodities")
     return combined
