@@ -12,6 +12,8 @@ CATEGORIES = {
     "livestock":   {"label": "Livestock",   "icon": "🐄", "color": "#f59e0b", "accent": "#fbbf24"},
     "macro":       {"label": "Macro",       "icon": "📊", "color": "#a78bfa", "accent": "#c4b5fd"},
 }
+# outer dictionary keys are category IDs used in code and DB
+# inner dictionaries contain display metadata for each category, used in the UI and charts
 
 # ---------------------------------------------------------------------------
 # Per-commodity metadata
@@ -177,7 +179,7 @@ SEV_COLORS = {
 }
 
 # ---------------------------------------------------------------------------
-# Page navigation
+# Page navigation (list of tuples: (icon, label))
 # ---------------------------------------------------------------------------
 PAGES = [
     ("🏠",  "Overview"),
@@ -195,7 +197,7 @@ PAGES = [
 # ---------------------------------------------------------------------------
 # Chart theme
 # ---------------------------------------------------------------------------
-PLOT_BG  = "rgba(0,0,0,0)"
+PLOT_BG  = "rgba(0,0,0,0)" # transparent plot BG to let Streamlit card background show through
 GRID_CLR = "rgba(255,255,255,0.04)"
 FONT_CLR = "#b8c4d8"
 
@@ -206,8 +208,18 @@ label_map    = {k: v["label"]    for k, v in COMMODITY_META.items()}
 color_map    = {k: v["color"]    for k, v in COMMODITY_META.items()}
 category_map = {k: v["category"] for k, v in COMMODITY_META.items()}
 
-# Commodities grouped by category
+# Commodities grouped by category — create a dictionary where keys are category IDs 
+# and values are lists of commodity IDs in that category
 CATEGORY_COMMODITIES: dict[str, list[str]] = {}
 for com, meta in COMMODITY_META.items():
     cat = meta["category"]
     CATEGORY_COMMODITIES.setdefault(cat, []).append(com)
+
+    '''
+    CATEGORY_COMMODITIES = {
+    "energy":      ["brent_crude", "wti_crude", "natural_gas", "heating_oil"],
+    "agriculture": ["wheat", "corn", "soybeans", "sugar"],
+    "livestock":   ["live_cattle", "feeder_cattle", "lean_hogs"],
+    "macro":       ["gold", "copper"],
+}
+    '''

@@ -1,0 +1,567 @@
+STREAMLIT: Python's web app framework
+
+How it runs:
+Every time something changes on the page: 
+    - a button is clicked 
+    - a dropdown is changed
+    - a checkbox is toggled 
+
+Streamlit reruns the entire Python script from top to bottom. 
+Not just the part that changed. The whole file, every time.
+
+dashboard structure:
+
+dashboard/
+    app.py                  ← entry point, the file you run
+    components/
+        __init__.py         ← makes components a package, exports everything
+        constants.py        ← commodity metadata, colours, category definitions
+        data.py             ← database connection and data loading functions
+        charts.py           ← all Plotly chart functions
+        filters.py          ← the filter bar at the top of each page
+        sidebar.py          ← the left navigation sidebar
+        styles.py           ← all the CSS for the dark theme
+    pages/
+        __init__.py         ← makes pages a package
+        overview.py         ← Overview page
+        energy.py           ← Energy page
+        agriculture.py      ← Agriculture page
+        livestock.py        ← Livestock page
+        macro.py            ← Macro page
+        ripple_effects.py   ← Ripple Effects page
+        event_intelligence.py
+        price_analysis.py
+        commodity_comparison.py
+        pipeline.py         ← Pipeline monitoring page
+        _category_page.py   ← shared template used by energy/agriculture/livestock/macro
+
+
+Supabase PostgreSQL
+        │
+        ▼
+dashboard/components/data.py        loads prices, events, pipeline runs into DataFrames
+        │
+        ▼
+dashboard/app.py                    passes those DataFrames to whichever page is active
+        │
+        ▼
+dashboard/pages/overview.py         (or energy.py, agriculture.py etc)
+        │                           receives the DataFrames, filters them, builds the page
+        ▼
+dashboard/components/charts.py      page calls chart functions, gets back Plotly figures
+        │
+        ▼
+st.plotly_chart(fig)                Streamlit renders the figure in the browser
+
+
+1. components/data.py       how data gets loaded from Supabase into DataFrames
+
+@st.cache_resource  → for objects that should be shared and reused
+                       database connections, ML models
+                       created ONCE, lives forever
+
+@st.cache_data      → for data that can be copied and returned fresh
+                       DataFrames, API responses
+                       created once, expires after ttl seconds
+
+user opens dashboard in browser
+        │
+        ▼
+app.py starts running
+        │
+        ├── load_prices()
+        │       ├── @st.cache_data checks — is there a cached result?
+        │       ├── NO (first load) → get_engine()
+        │       │       ├── @st.cache_resource checks — is engine already created?
+        │       │       ├── NO → build db_url from os.getenv() variables
+        │       │       │       └── create_engine(db_url) → SQLAlchemy engine object
+        │       │       └── YES → return existing engine (no new connection)
+        │       ├── pd.read_sql("SELECT * FROM commodity_prices ORDER BY date ASC", engine)
+        │       │       └── executes query against Supabase
+        │       │       └── returns raw DataFrame
+        │       ├── df["date"] = pd.to_datetime(df["date"])
+        │       │       └── converts date strings to datetime objects
+        │       └── stores result in cache for 3600 seconds
+        │               └── returns DataFrame → stored in prices variable
+        │
+        ├── load_events()
+        │       └── same pattern as load_prices()
+        │               └── returns DataFrame → stored in events variable
+        │
+        ├── load_runs()
+        │       ├── same pattern but ORDER BY started_at DESC LIMIT 20
+        │       └── returns DataFrame → stored in runs variable
+        │
+        └── prices, events, runs passed to active page renderer
+                └── page uses them to filter, calculate, and build charts
+
+user clicks a different page (e.g. Energy)
+        │
+        ├── Streamlit reruns app.py from top
+        ├── load_prices() called again
+        │       └── @st.cache_data → cache still valid → returns cached DataFrame instantly
+        │               └── NO database query fired
+        └── Energy page renders with same DataFrames
+
+2. components/constants.py  what commodity metadata looks like, how it's used
+
+constants.py is imported by almost every other file
+        │
+        ├── CATEGORIES
+        │       └── used by category pages for colours, icons, labels
+        │
+        ├── COMMODITY_META
+        │       ├── used by filter bar → populate commodity dropdown
+        │       ├── used by chart functions → get colour and label per commodity
+        │       ├── used by category pages → show war signal banner
+        │       ├── used by ripple effects page → get downstream targets
+        │       └── used by event intelligence → show context box
+        │
+        ├── SEV_COLORS
+        │       └── used by charts.py → colour the event vertical lines
+        │
+        ├── PAGES
+        │       └── used by sidebar.py → render navigation buttons
+        │
+        ├── PLOT_BG, GRID_CLR, FONT_CLR
+        │       └── used by charts.py → every chart's base layout
+        │
+        ├── label_map, color_map, category_map
+        │       └── used by charts.py → map commodity_name to display values
+        │               └── df["label"] = df["commodity_name"].map(label_map)
+        │
+        └── CATEGORY_COMMODITIES
+                └── used by category pages → filter dropdown to this category only
+                └── used by overview page → show avg return per category
+
+3. components/styles.py     how CSS is injected into Streamlit
+4. app.py                   how the app starts, how navigation works, session state
+
+app.py — entry point, runs top to bottom on every interaction
+│
+├── st.set_page_config()
+│       └── browser-level config — must be first Streamlit call
+│               ├── page_title  → browser tab text
+│               ├── page_icon   → browser tab favicon
+│               ├── layout      → "wide" removes Streamlit's default narrow column
+│               └── initial_sidebar_state → "expanded" | "collapsed" on first load
+│                       └── Streamlit's own internal code reads this and acts on it
+│                               you pass the value, Streamlit handles the rendering
+│
+├── st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
+│       └── injects <style> block into the browser
+│               └── styles.py defines all CSS classes used by every page
+│                       └── runs before any page content — styles are ready globally
+│
+├── session state initialisation
+│       └── if "page" not in st.session_state → set default to "Overview"
+│               ├── st.session_state persists across reruns for this browser session
+│               ├── first load → "page" doesn't exist → set "Overview"
+│               └── every subsequent rerun → "page" already exists → skip
+│
+├── data loading (three cached DB queries)
+│       ├── prices = load_prices()    → commodity_prices table, all rows
+│       ├── events = load_events()    → geopolitical_events table, all rows
+│       └── runs   = load_runs()      → pipeline_runs table, last 20 rows
+│               └── @st.cache_data(ttl=3600) on each function
+│                       ├── first call  → hits Supabase, stores result in cache
+│                       └── every rerun → returns cached DataFrame instantly
+│                               └── without this, every button click = a DB query
+│
+├── render_sidebar(runs)
+│       └── sidebar.py draws the sidebar panel
+│               ├── brand text and tagline at the top
+│               ├── nav buttons grouped by section
+│               │       └── on click → st.session_state.page = page_name
+│               │                    → st.rerun() → app.py reruns from top
+│               └── last pipeline run status at the bottom (uses runs DataFrame)
+│
+├── PAGE_RENDERERS dict
+│       └── maps page name string → lambda function
+│               ├── "Overview"    → lambda: overview.render(prices, events)
+│               ├── "Energy"      → lambda: energy.render(prices, events)
+│               ├── ...8 more pages
+│               └── "Pipeline"    → lambda: pipeline.render(runs)
+│                       └── lambdas defer execution — nothing renders yet
+│                               └── without lambda: all 10 pages would render now
+│
+├── st.markdown(title bar HTML)
+│       └── renders the orange "🛢️ WAR & OIL TRACKER" strip
+│               └── appears above every page — lives in app.py, outside page renderers
+│
+└── renderer = PAGE_RENDERERS.get(st.session_state.page, PAGE_RENDERERS["Overview"])
+    renderer()
+            ├── .get(key, default) → safe dict lookup with fallback
+            │       └── if page name not in dict → fall back to Overview, not a crash
+            ├── renderer is now the lambda for the current page
+            └── renderer() calls it → executes the right page's render() function
+                    └── that page function writes all its content to the screen
+
+
+─────────────────────────────────────────────────────────────────
+THE RERUN LOOP — what happens on every single user interaction
+─────────────────────────────────────────────────────────────────
+
+user clicks "Energy" in sidebar
+        │
+        ▼
+sidebar.py sets st.session_state.page = "Energy"
+        │
+        ▼
+st.rerun() — Streamlit restarts app.py from line 1
+        │
+        ▼
+set_page_config → CSS injection → session state check (skip, "Energy" exists)
+        │
+        ▼
+load_prices() → cache hit, instant
+load_events() → cache hit, instant
+load_runs()   → cache hit, instant
+        │
+        ▼
+render_sidebar(runs) → sidebar redraws, Energy button now highlighted
+        │
+        ▼
+PAGE_RENDERERS dict built, 10 lambdas ready, nothing called yet
+        │
+        ▼
+title bar rendered
+        │
+        ▼
+PAGE_RENDERERS.get("Energy") → energy lambda retrieved
+        │
+        ▼
+renderer() → energy.render(prices, events) executes
+        │
+        ▼
+Energy page content appears on screen
+
+5. components/sidebar.py    how the sidebar navigation is built
+
+sidebar.py — render_sidebar(runs) called from app.py on every rerun
+│
+├── with st.sidebar:
+│       └── context manager — everything inside draws in the sidebar panel
+│               │
+│               ├── st.markdown(brand HTML)
+│               │       └── draws two lines at the top of the sidebar
+│               │               ├── "🛢️ WAR & OIL"  ← .sb-brand (Bebas Neue, orange)
+│               │               └── "Geopolitical Commodity Tracker"  ← .sb-tagline (mono, grey)
+│               │
+│               ├── for group_label, pages in _NAV_GROUPS:
+│               │       │   outer loop — 4 iterations, one per nav group
+│               │       │   each item in _NAV_GROUPS is a tuple → unpacked into two variables
+│               │       │       group_label = the section title string e.g. "BY CATEGORY"
+│               │       │       pages       = the list of (icon, page_name) tuples for that group
+│               │       │
+│               │       ├── ITERATION 1 — group_label="MAIN", pages=[("🏠","Overview")]
+│               │       │       │
+│               │       │       ├── st.markdown("MAIN")
+│               │       │       │       └── draws section header on screen
+│               │       │       │               └── styled by .sb-section (mono, grey, uppercase)
+│               │       │       │
+│               │       │       └── inner loop — 1 page in this group
+│               │       │               │
+│               │       │               └── icon="🏠", page_name="Overview"
+│               │       │                       │
+│               │       │                       └── st.button("🏠  Overview", key="nav_Overview")
+│               │       │                               ├── draws the button on screen
+│               │       │                               ├── returns False (not clicked) → skip body
+│               │       │                               └── returns True  (just clicked)  → run body
+│               │       │                                       ├── st.session_state.page = "Overview"
+│               │       │                                       └── st.rerun()
+│               │       │
+│               │       ├── ITERATION 2 — group_label="BY CATEGORY", pages=[4 tuples]
+│               │       │       │
+│               │       │       ├── st.markdown("BY CATEGORY")
+│               │       │       │       └── draws section header
+│               │       │       │
+│               │       │       └── inner loop — 4 pages in this group
+│               │       │               │
+│               │       │               ├── icon="⚡", page_name="Energy"
+│               │       │               │       └── st.button("⚡  Energy", key="nav_Energy")
+│               │       │               │               ├── draws button
+│               │       │               │               ├── False → skip
+│               │       │               │               └── True  → st.session_state.page = "Energy"
+│               │       │               │                          → st.rerun()
+│               │       │               │
+│               │       │               ├── icon="🌾", page_name="Agriculture"
+│               │       │               │       └── st.button("🌾  Agriculture", key="nav_Agriculture")
+│               │       │               │               ├── draws button
+│               │       │               │               ├── False → skip
+│               │       │               │               └── True  → st.session_state.page = "Agriculture"
+│               │       │               │                          → st.rerun()
+│               │       │               │
+│               │       │               ├── icon="🐄", page_name="Livestock"
+│               │       │               │       └── st.button("🐄  Livestock", key="nav_Livestock")
+│               │       │               │               ├── draws button
+│               │       │               │               ├── False → skip
+│               │       │               │               └── True  → st.session_state.page = "Livestock"
+│               │       │               │                          → st.rerun()
+│               │       │               │
+│               │       │               └── icon="📊", page_name="Macro"
+│               │       │                       └── st.button("📊  Macro", key="nav_Macro")
+│               │       │                               ├── draws button
+│               │       │                               ├── False → skip
+│               │       │                               └── True  → st.session_state.page = "Macro"
+│               │       │                                          → st.rerun()
+│               │       │
+│               │       ├── ITERATION 3 — group_label="ANALYSIS", pages=[4 tuples]
+│               │       │       │
+│               │       │       ├── st.markdown("ANALYSIS")
+│               │       │       │       └── draws section header
+│               │       │       │
+│               │       │       └── inner loop — 4 pages in this group
+│               │       │               │
+│               │       │               ├── st.button("🔗  Ripple Effects",     key="nav_Ripple Effects")
+│               │       │               │       ├── draws button
+│               │       │               │       ├── False → skip
+│               │       │               │       └── True  → st.session_state.page = "Ripple Effects"
+│               │       │               │                  → st.rerun()
+│               │       │               │
+│               │       │               ├── st.button("💥  Event Intelligence", key="nav_Event Intelligence")
+│               │       │               │       ├── draws button
+│               │       │               │       ├── False → skip
+│               │       │               │       └── True  → st.session_state.page = "Event Intelligence"
+│               │       │               │                  → st.rerun()
+│               │       │               │
+│               │       │               ├── st.button("📈  Price Analysis",     key="nav_Price Analysis")
+│               │       │               │       ├── draws button
+│               │       │               │       ├── False → skip
+│               │       │               │       └── True  → st.session_state.page = "Price Analysis"
+│               │       │               │                  → st.rerun()
+│               │       │               │
+│               │       │               └── st.button("🔄  Comparison",         key="nav_Comparison")
+│               │       │                       ├── draws button
+│               │       │                       ├── False → skip
+│               │       │                       └── True  → st.session_state.page = "Comparison"
+│               │       │                                  → st.rerun()
+│               │       │
+│               │       └── ITERATION 4 — group_label="SYSTEM", pages=[1 tuple]
+│               │               │
+│               │               ├── st.markdown("SYSTEM")
+│               │               │       └── draws section header
+│               │               │
+│               │               └── inner loop — 1 page in this group
+│               │                       │
+│               │                       └── st.button("🔧  Pipeline", key="nav_Pipeline")
+│               │                               ├── draws button
+│               │                               ├── False → skip
+│               │                               └── True  → st.session_state.page = "Pipeline"
+│               │                                          → st.rerun()
+│               │
+│               └── if runs is not None and not runs.empty:
+│                       │   guard clause — only render status block if data exists
+│                       │
+│                       ├── last = runs.iloc[0]
+│                       │       └── first row of DataFrame = most recent run
+│                       │               └── load_runs() queries ORDER BY started_at DESC
+│                       │
+│                       ├── status = last.get("status", "unknown")
+│                       │       └── safe column access — "unknown" if column missing
+│                       │
+│                       ├── status_color = inline dict lookup
+│                       │       ├── builds dict:  {"success": "#22c55e", "failed": "#ef4444", "running": "#f59e0b"}
+│                       │       ├── calls .get(status, "#6b7fa8") on it immediately
+│                       │       └── returns matching hex colour, or grey if status unrecognised
+│                       │
+│                       ├── rows = last.get("rows_loaded", 0) or 0
+│                       │       ├── last.get("rows_loaded", 0) → gets value, default 0 if column missing
+│                       │       └── or 0 → if value is None (pipeline failed before loading), treat as 0
+│                       │               └── None is falsy in Python → None or 0 → evaluates to 0
+│                       │
+│                       └── st.markdown(status HTML)
+│                               └── draws status block at bottom of sidebar
+│                                       ├── "LAST PIPELINE RUN"  ← label in mono grey
+│                                       └── "● SUCCESS · 15,234 rows"  ← coloured by status_color
+│                                               └── {int(rows):,} formats number with comma separator
+│                                                       └── 15234 → "15,234"
+│
+│
+├── st.rerun() fires (any button clicked)
+│       └── stops execution immediately, restarts app.py from line 1
+│               │
+│               ├── CSS injected
+│               ├── session state read → st.session_state.page = whatever was set
+│               ├── data loaded from cache (instant, no DB hit)
+│               ├── render_sidebar(runs) called again → full loop redraws all buttons
+│               └── PAGE_RENDERERS.get(st.session_state.page) → correct page renders
+│
+│
+─────────────────────────────────────────────────────────────────
+WHAT APPEARS ON SCREEN — in order, top to bottom
+─────────────────────────────────────────────────────────────────
+│
+├── [sidebar panel]
+│       ├── 🛢️ WAR & OIL
+│       ├── Geopolitical Commodity Tracker
+│       │
+│       ├── MAIN
+│       ├── 🏠  Overview       ← button
+│       │
+│       ├── BY CATEGORY
+│       ├── ⚡  Energy         ← button
+│       ├── 🌾  Agriculture    ← button
+│       ├── 🐄  Livestock      ← button
+│       ├── 📊  Macro          ← button
+│       │
+│       ├── ANALYSIS
+│       ├── 🔗  Ripple Effects      ← button
+│       ├── 💥  Event Intelligence  ← button
+│       ├── 📈  Price Analysis      ← button
+│       ├── 🔄  Comparison          ← button
+│       │
+│       ├── SYSTEM
+│       ├── 🔧  Pipeline       ← button
+│       │
+│       └── ──────────────────
+│           LAST PIPELINE RUN
+│           ● SUCCESS · 15,234 rows   ← green if success, red if failed, amber if running
+│
+─────────────────────────────────────────────────────────────────
+KEY BEHAVIOURS TO REMEMBER
+─────────────────────────────────────────────────────────────────
+│
+├── st.button() runs every rerun
+│       ├── always draws the button on screen
+│       ├── returns False on every normal rerun → body skipped
+│       └── returns True only on the rerun triggered by clicking it → body runs once
+│
+├── key= on every widget
+│       └── uniquely identifies the widget across reruns
+│               └── without it, Streamlit cannot tell which button was clicked
+│
+├── st.session_state.page
+│       └── the only thing that persists between reruns
+│               └── sidebar writes it → app.py reads it → correct page renders
+│
+└── st.rerun()
+        └── does not "go somewhere" — it restarts the whole script
+                └── the new page appears because session state changed
+                        not because of any routing or navigation system
+
+6. components/filters.py    how the filter bar works
+
+render_filter_bar(page_key, prices, show_commodity, show_events_toggle, show_ma_toggle)
+│
+│   called by every page, each passing its own page_key and toggle preferences
+│
+├── derive bounds from data
+│       ├── min_d = prices["date"].min().date()   → earliest date in DB
+│       ├── max_d = prices["date"].max().date()   → latest date in DB
+│       └── all_commodities = sorted(prices["commodity_name"].unique())
+│               └── unique() removes duplicates, sorted() alphabetises the list
+│
+├── build col_widths list dynamically
+│       ├── start with empty list []
+│       ├── if show_commodity    → append 2   (commodity selector, wider)
+│       ├── always              → append 3   (date range, widest)
+│       ├── if show_events_toggle → append 1  (events checkbox, narrow)
+│       └── if show_ma_toggle    → append 1  (MA checkbox, narrow)
+│               └── st.columns(col_widths) creates exactly as many columns as needed
+│                       └── ratios are relative — [2,3,1,1] means date is 3/7 of width
+│
+├── ci = 0   ← column index counter, tracks which slot to fill next
+│
+├── st.markdown('<div class="filter-bar">')
+│       └── opens styled container — dark background, border, rounded corners
+│               └── all widgets below land inside this div visually
+│
+├── [SLOT ci] commodity selectbox — only if show_commodity=True
+│       ├── options = all_commodities   (raw keys e.g. "brent_crude")
+│       ├── format_func = lambda c → looks up icon + label in COMMODITY_META
+│       │       ├── COMMODITY_META.get(c, {})         → safe lookup, {} if missing
+│       │       └── .get('icon', '🔹') / .get('label', c) → fallback if key absent
+│       │               └── displayed as "🛢️ Brent Crude", stored as "brent_crude"
+│       ├── key = f"{page_key}_com"    → unique per page e.g. "ov_com", "pa_com"
+│       └── ci += 1   → move counter to next slot
+│
+├── [SLOT ci] date range picker — always rendered
+│       ├── value = [min_d, max_d]   → defaults to full available range
+│       ├── st.date_input returns dr — a tuple of selected dates
+│       ├── start_dt = pd.to_datetime(dr[0])
+│       └── end_dt   = pd.to_datetime(dr[1]) if len(dr) == 2 else pd.to_datetime(max_d)
+│               ├── len(dr) == 2 guard — user may have clicked start but not end yet
+│               │       └── during that moment dr has only 1 item — dr[1] would crash
+│               └── pd.to_datetime() converts datetime.date → Timestamp
+│                       └── matches prices["date"] dtype so filtering works correctly
+│       └── ci += 1
+│
+├── [SLOT ci] events checkbox — only if show_events_toggle=True
+│       ├── show_ev defaults to True before this block
+│       │       └── if toggle is hidden, show_ev stays True — events on by default
+│       ├── st.checkbox("Events", value=True, key=f"{page_key}_ev")
+│       └── ci += 1
+│
+├── [SLOT ci] moving avg checkbox — only if show_ma_toggle=True
+│       ├── show_ma defaults to True before this block
+│       │       └── same logic — hidden toggle = feature stays on by default
+│       └── st.checkbox("Moving Avg", value=True, key=f"{page_key}_ma")
+│
+├── st.markdown("</div>")
+│       └── closes the filter-bar container
+│
+└── return FilterResult(sel_com, start_dt, end_dt, show_ev, show_ma)
+        └── namedtuple — immutable, 5 named fields, returned to the calling page
+                ├── caller accesses filters.commodity, filters.start_dt etc.
+                └── every page then filters the prices DataFrame using these values
+
+
+─────────────────────────────────────────────────────────────────
+HOW EACH PAGE USES THE RESULT
+─────────────────────────────────────────────────────────────────
+
+page calls render_filter_bar(...)
+        │
+        ▼
+FilterResult returned with 5 fields
+        │
+        ▼
+page unpacks what it needs
+        ├── sel_com  = filters.commodity
+        ├── start_dt = filters.start_dt
+        ├── end_dt   = filters.end_dt
+        ├── show_ev  = filters.show_ev
+        └── show_ma  = filters.show_ma
+        │
+        ▼
+page filters the DataFrame
+        └── filtered = prices[
+                (prices["commodity_name"] == sel_com)
+                & (prices["date"] >= start_dt)
+                & (prices["date"] <= end_dt)
+            ]
+        │
+        ▼
+filtered DataFrame + show_ev + show_ma passed into chart functions
+        └── every chart on the page responds to whatever the user selected
+
+
+─────────────────────────────────────────────────────────────────
+WHY UNIQUE KEYS MATTER — what breaks without them
+─────────────────────────────────────────────────────────────────
+
+Overview page renders selectbox with key="commodity"
+        │
+user navigates to Energy page
+        │
+Energy page renders selectbox with key="commodity"   ← same key
+        │
+Streamlit sees same key → treats it as the same widget
+        │
+carries over Overview's selected value into Energy page
+        │
+wrong commodity shown, wrong data filtered
+        │
+        vs
+        │
+Overview uses key="ov_com"
+Energy   uses key="en_com"    (via page_key prefix)
+        │
+Streamlit tracks them as completely separate widgets
+        │
+each page remembers its own selection independently
+
+7. components/charts.py     how Plotly charts are built
+8. pages/overview.py        how a full page comes together using all of the above
+9. pages/_category_page.py  the shared page template

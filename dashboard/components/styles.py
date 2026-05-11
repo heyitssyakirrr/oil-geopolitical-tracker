@@ -288,7 +288,7 @@ button[data-testid="stSidebarCollapseButton"] { display: none !important; }
 .sb-tagline {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9px;
-    color: #4a5878;
+    color: #8a9bbf;
     letter-spacing: 0.22em;
     text-transform: uppercase;
     padding: 0 10px 10px;
@@ -298,7 +298,7 @@ button[data-testid="stSidebarCollapseButton"] { display: none !important; }
 .sb-section {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9px;
-    color: #4a5878;
+    color: #8a9bbf;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     padding: 10px 10px 4px;
@@ -312,6 +312,21 @@ button[data-testid="stSidebarCollapseButton"] { display: none !important; }
     padding: 6px 10px 2px;
     border-top: 1px solid #1a2035;
     margin-top: 4px;
+}
+
+[data-testid="stSidebar"] button {
+    text-align: left !important;
+    justify-content: flex-start !important;
+    padding-left: 12px !important;
+}
+
+[data-testid="stSidebar"] button p {
+    text-align: left !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    color: #c8d3ea !important;
 }
 
 /* ── Sidebar radio nav ────────────────────────────────── */

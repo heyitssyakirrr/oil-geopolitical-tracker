@@ -186,3 +186,29 @@ run_load(enriched_df, events_df, engine) is called from main.py
                         │       ├── rows_loaded = rows from load_prices()
                         │       └── error_message = None if success, exception text if failed
                         └── uses :named_params, not f-strings → prevents SQL injection
+
+pipeline.yml:
+
+Every day at 9am Malaysia time
+        │
+        GitHub Actions triggers automatically
+        │
+        ├── fetches fresh commodity prices from Yahoo Finance
+        ├── cleans and enriches the data
+        ├── upserts into Supabase PostgreSQL
+        │       └── only new rows inserted, no duplicates ever
+        │
+        └── pipeline_runs table logs every execution
+                │
+                Streamlit dashboard reads from Supabase
+                and displays everything live
+
+What have learned:
+
+1. ETL pipeline in Python
+2. PostgreSQL schema design with upsert logic
+3. Streamlit dashboard with Plotly charts
+4. Automated daily runs via GitHub Actions
+5. Cloud database on Supabase
+6. Proper secrets management
+7. Logging and pipeline monitoring

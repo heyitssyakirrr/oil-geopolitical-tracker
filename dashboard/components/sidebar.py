@@ -37,6 +37,7 @@ _NAV_GROUPS = [
 
 def render_sidebar(runs) -> None:
     """Render the sidebar — brand, nav groups, last-run status."""
+    # with —> activates the sidebar context before the block, deactivates it after
     with st.sidebar:
         # Brand
         st.markdown(

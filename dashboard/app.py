@@ -17,7 +17,7 @@ from pages import (
 st.set_page_config(
     page_title="War & Oil Tracker",
     page_icon="🛢️",
-    layout="wide",
+    layout="wide", # use the full browser width instead of the default narrow centred column
     initial_sidebar_state="expanded",
 )
 
@@ -26,12 +26,18 @@ st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
 if "page" not in st.session_state:
     st.session_state.page = "Overview"
 
+# these three calls will be cached by Streamlit, 
+# so they won't hit the database on every interaction, 
+# just the first load and when the underlying data changes
 prices = load_prices()
 events = load_events()
 runs   = load_runs()
 
+# receives runs to display the last pipeline run status
+# uses with st.sidebar: to place everything inside sidebar panel
 render_sidebar(runs)
 
+# lambda functions to be called when a page is selected from the sidebar
 PAGE_RENDERERS = {
     # Main
     "Overview":           lambda: overview.render(prices, events),
@@ -56,5 +62,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-renderer = PAGE_RENDERERS.get(st.session_state.page, PAGE_RENDERERS["Overview"])
-renderer()
+# dict dispatch here is cleaner than long if/elif chains for routing
+# dict.get(key, default)
+renderer = PAGE_RENDERERS.get(st.session_state.page, PAGE_RENDERERS["Overview"]) # now is a function
+renderer() # call the function to render the selected page
