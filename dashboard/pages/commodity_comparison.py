@@ -34,7 +34,7 @@ def render(prices, events):
             group["norm"] = group["close"] / base * 100
         return group
 
-    comp_df = comp_df.groupby("commodity_name", group_keys=False).apply(normalize).reset_index()
+    comp_df = comp_df.groupby("commodity_name", group_keys=False).apply(normalize).reset_index(drop=True)
     comp_df["label"] = comp_df["commodity_name"].map(label_map).fillna(comp_df["commodity_name"])
 
     st.markdown(
