@@ -65,6 +65,19 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     border-radius: 4px !important;
     width: 100% !important;
     height: 40px !important;
+    display: block !important;
+}
+
+[data-testid="stSidebar"] div.stButton {
+    width: 100% !important;
+}
+[data-testid="stSidebarContent"] > div:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+section[data-testid="stSidebar"] > div:first-child {
+    padding-top: 0 !important;
 }
 [data-testid="stSidebar"] button p {
     text-align: left !important;
