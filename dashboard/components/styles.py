@@ -52,7 +52,6 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     max-width: 285px !important;
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
-[data-testid="stSidebarNav"] { display: none !important; }
 [data-testid="stSidebar"] button {
     text-align: left !important;
     justify-content: flex-start !important;
