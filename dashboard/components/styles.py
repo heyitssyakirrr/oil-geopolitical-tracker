@@ -48,7 +48,6 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     max-width: 270px !important;
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
-[data-testid="stSidebarNav"] { display: none !important; }
 
 /* ── Main content ─────────────────────────────────────── */
 .main-content { padding: 0rem 1.8rem 3.2rem 1.8rem; max-width: 14200px; margin: 0 auto; }
