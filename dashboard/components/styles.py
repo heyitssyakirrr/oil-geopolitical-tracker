@@ -69,8 +69,8 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 }
 
 [data-testid="stSidebar"][aria-expanded="false"] {
-    width: 0 !important;
-    min-width: 0 !important;
+    width: 60 !important;
+    min-width: 60 !important;
 }
 
 /* ── Page header ──────────────────────────────────────── */
@@ -480,5 +480,13 @@ label[data-testid="stWidgetLabel"] p {
 ::-webkit-scrollbar-track { background: #080a0f; }
 ::-webkit-scrollbar-thumb { background: #1a2035; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: #2a3350; }
+
+/* Always show the sidebar collapse/expand toggle */
+button[data-testid="collapsedControl"],
+button[kind="header"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
 </style>
 """
