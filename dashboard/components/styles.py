@@ -58,13 +58,8 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 [data-testid="stSidebarNav"] { height: 0 !important; overflow: hidden !important; }
-[data-testid="stSidebar"] button {
-    text-align: left !important;
-    justify-content: flex-start !important;
-    padding-left: 14px !important;
-    width: 100% !important;
 }
-[data-testid="stSidebar"] button[kind="secondary"] {
+[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
     background: #111520 !important;
     border: 1px solid #1a2035 !important;
     border-radius: 4px !important;
