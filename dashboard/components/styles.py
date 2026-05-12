@@ -50,22 +50,22 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 [data-testid="stSidebarNav"] { display: none !important; }
-[data-testid="stSidebar"][aria-expanded="false"] {
-    min-width: 0 !important; width: 0 !important;
-    border-right: none !important; overflow: hidden !important;
 }
-[data-testid="stSidebar"][aria-expanded="false"] > div {
-    width: 0 !important; min-width: 0 !important; overflow: hidden !important;
-}
-[data-testid="collapsedControl"] {
+[data-testid="collapsedControl"],
+button[data-testid="stSidebarCollapseButton"] {
     background: #0a0d14 !important;
-    border-right: 1px solid #1a2035 !important;
+    border: 1px solid #1a2035 !important;
     color: #ff8a4c !important;
-    top: 10px !important; left: 0px !important;
-    position: fixed !important; z-index: 9999 !important;
+    position: fixed !important;
+    top: 10px !important;
+    left: 0px !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
-[data-testid="collapsedControl"] svg { fill: #ff8a4c !important; }
-button[data-testid="stSidebarCollapseButton"] { display: none !important; }
+[data-testid="collapsedControl"] svg,
+button[data-testid="stSidebarCollapseButton"] svg { fill: #ff8a4c !important; }
 
 /* ── Main content ─────────────────────────────────────── */
 .main-content { padding: 0rem 1.8rem 3.2rem 1.8rem; max-width: 14200px; margin: 0 auto; }
