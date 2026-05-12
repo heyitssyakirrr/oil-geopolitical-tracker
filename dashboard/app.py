@@ -15,8 +15,8 @@ from pages import (
 )
 
 st.set_page_config(
-    page_title="War & Oil Tracker",
-    page_icon="🛢️",
+    page_title="Global Crisis - Commodity Tracker",
+    page_icon="📡",
     layout="wide", # use the full browser width instead of the default narrow centred column
     initial_sidebar_state="expanded",
 )
@@ -60,7 +60,7 @@ PAGE_RENDERERS = {
 
 st.markdown(
     '<div class="dash-global-title">'
-    '🛢️ WAR &amp; OIL TRACKER &nbsp;·&nbsp; GEOPOLITICAL COMMODITY DASHBOARD'
+    '📡 GLOBAL CRISIS &nbsp;·&nbsp; COMMODITY TRACKER'
     '</div>',
     unsafe_allow_html=True,
 )

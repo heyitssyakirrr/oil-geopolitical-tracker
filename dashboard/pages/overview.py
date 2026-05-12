@@ -101,14 +101,6 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
         unsafe_allow_html=True,
     )
 
-    # ── War signal banner ─────────────────────────────────────────────────────
-    st.markdown(
-        f'<div class="alert alert-red">'
-        f'<strong>⚡ WAR SIGNAL:</strong> {meta.get("war_signal","")}'
-        f'</div>',
-        unsafe_allow_html=True,
-    )
-
     # ── Category summary cards ────────────────────────────────────────────────
     st.markdown('<div class="sec-head">Market Overview by Category</div>',
                 unsafe_allow_html=True)

@@ -41,8 +41,8 @@ def render_sidebar(runs) -> None:
     with st.sidebar:
         # Brand
         st.markdown(
-            '<span class="sb-brand">🛢️ WAR &amp; OIL</span>'
-            '<span class="sb-tagline">Geopolitical Commodity Tracker</span>',
+            '<span class="sb-brand">📡 GLOBAL CRISIS</span>'
+            '<span class="sb-tagline">  COMMODITY TRACKER</span>',
             unsafe_allow_html=True,
         )
 

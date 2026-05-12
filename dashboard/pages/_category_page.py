@@ -8,11 +8,10 @@ the shared prices/events DataFrames.
 Layout per page:
     1. Filter bar  (commodity selector scoped to this category + date range)
     2. Page header with category badge
-    3. War-signal banner for selected commodity
-    4. KPI cards  (spot price, 7d MA, 30d MA, vs 30d avg, 30d vol)
-    5. Category normalized chart  (all commodities in this category)
-    6. Price history of selected commodity
-    7. Ripple targets — which downstream commodities are affected
+    3. KPI cards  (spot price, 7d MA, 30d MA, vs 30d avg, 30d vol)
+    4. Category normalized chart  (all commodities in this category)
+    5. Price history of selected commodity
+    6. Ripple targets — which downstream commodities are affected
 """
 
 from __future__ import annotations
@@ -131,8 +130,6 @@ def render_category_page(
     # ── Page header ───────────────────────────────────────────────────────────
     st.markdown(
         f'<div class="page-header">'
-        f'<div class="cat-badge" style="color:{cat_color};border-color:{cat_color}20;background:{cat_color}0d">'
-        f'{cat_icon} {cat_label.upper()}</div>'
         f'<div class="page-title">{cat_icon} {cat_label.upper()}</div>'
         f'<div class="page-subtitle">'
         f'▸ {" · ".join(label_map.get(c, c) for c in cat_commodities)}'
@@ -140,24 +137,6 @@ def render_category_page(
         f'</div>',
         unsafe_allow_html=True,
     )
-
-    # ── War signal banner ─────────────────────────────────────────────────────
-    war_signal = meta.get("war_signal", "")
-    if war_signal:
-        sev_cls_map = {
-            "energy": "alert-red",
-            "agriculture": "alert-amber",
-            "livestock": "alert-amber",
-            "macro": "alert-blue",
-        }
-        alert_cls = sev_cls_map.get(category, "alert-blue")
-        st.markdown(
-            f'<div class="alert {alert_cls}">'
-            f'<strong>⚡ WAR SIGNAL — {meta.get("icon","")}'
-            f' {meta.get("label", sel_com)}:</strong> {war_signal}'
-            f'</div>',
-            unsafe_allow_html=True,
-        )
 
     # ── KPI cards ─────────────────────────────────────────────────────────────
     if not filtered.empty:
