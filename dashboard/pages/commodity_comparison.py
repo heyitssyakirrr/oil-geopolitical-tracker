@@ -49,7 +49,7 @@ def render(prices, events):
 
     st.plotly_chart(
         normalized_comparison_chart(comp_df, events, start_dt, end_dt, show_ev),
-        use_container_width=True,
+        width='stretch',
     )
 
     c1, c2 = st.columns(2)
@@ -59,7 +59,7 @@ def render(prices, events):
             '<div class="sec-sub">30-day rolling std dev — most to least volatile</div>',
             unsafe_allow_html=True,
         )
-        st.plotly_chart(volatility_ranking_bar(comp_df), use_container_width=True)
+        st.plotly_chart(volatility_ranking_bar(comp_df), width='stretch')
 
     with c2:
         st.markdown('<div class="sec-head">Correlation Heatmap</div>', unsafe_allow_html=True)
@@ -69,6 +69,6 @@ def render(prices, events):
             '</div>',
             unsafe_allow_html=True,
         )
-        st.plotly_chart(correlation_heatmap(comp_df), use_container_width=True)
+        st.plotly_chart(correlation_heatmap(comp_df), width='stretch')
 
     st.markdown('</div>', unsafe_allow_html=True)
