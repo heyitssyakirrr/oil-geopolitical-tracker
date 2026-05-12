@@ -79,7 +79,7 @@ def render(prices: pd.DataFrame, _events=None) -> None:
         '</div>',
         unsafe_allow_html=True,
     )
-    st.plotly_chart(candlestick_chart(filtered, meta, show_ma), use_container_width=True)
+    st.plotly_chart(candlestick_chart(filtered, meta, show_ma), width='stretch')
 
     # Return distribution + Volatility timeline (side by side)
     col1, col2 = st.columns(2)
@@ -89,7 +89,7 @@ def render(prices: pd.DataFrame, _events=None) -> None:
             '<div class="sec-sub">Histogram of daily % price changes · Fat tails = more extreme moves</div>',
             unsafe_allow_html=True,
         )
-        st.plotly_chart(return_histogram(filtered, accent), use_container_width=True)
+        st.plotly_chart(return_histogram(filtered, accent), width='stretch')
 
     with col2:
         st.markdown('<div class="sec-head">Volatility Timeline</div>', unsafe_allow_html=True)
@@ -97,7 +97,7 @@ def render(prices: pd.DataFrame, _events=None) -> None:
             '<div class="sec-sub">30-day rolling volatility · Spikes = event-driven panic</div>',
             unsafe_allow_html=True,
         )
-        st.plotly_chart(volatility_chart(filtered), use_container_width=True)
+        st.plotly_chart(volatility_chart(filtered), width='stretch')
 
     # Monthly range
     st.markdown('<div class="sec-head">Monthly Average Daily Range</div>', unsafe_allow_html=True)
@@ -107,6 +107,6 @@ def render(prices: pd.DataFrame, _events=None) -> None:
         '</div>',
         unsafe_allow_html=True,
     )
-    st.plotly_chart(monthly_range_bar(filtered, meta), use_container_width=True)
+    st.plotly_chart(monthly_range_bar(filtered, meta), width='stretch')
 
     st.markdown('</div>', unsafe_allow_html=True)

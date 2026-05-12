@@ -59,7 +59,7 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
         table_df = pd.DataFrame(impact_rows).drop(columns=["_pct", "_sev", "_date"])
         st.dataframe(
             table_df,
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
             height=360,
             column_config={
@@ -68,9 +68,9 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
         )
         
     with c2:
-        st.plotly_chart(severity_avg_bar(impact_rows), use_container_width=True)
+        st.plotly_chart(severity_avg_bar(impact_rows), width='stretch')
 
-    st.plotly_chart(event_timeline_scatter(impact_rows), use_container_width=True)
+    st.plotly_chart(event_timeline_scatter(impact_rows), width='stretch')
 
     meta = COMMODITY_META.get(sel_com, {})
     st.markdown(

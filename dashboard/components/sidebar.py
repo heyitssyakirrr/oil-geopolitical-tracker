@@ -56,7 +56,7 @@ def render_sidebar(runs) -> None:
                 if st.button(
                     f"{icon}  {page_name}",
                     key=f"nav_{page_name}",
-                    use_container_width=True,
+                    width='stretch',
                 ):
                     st.session_state.page = page_name
                     st.rerun()

@@ -22,10 +22,10 @@ def render(runs):
     if runs.empty:
         st.warning("No pipeline runs available.")
     else:
-        st.plotly_chart(pipeline_bar(runs), use_container_width=True)
+        st.plotly_chart(pipeline_bar(runs), width='stretch')
         st.dataframe(
             _prepare_runs_table(runs),
-            use_container_width=True,
+            width='stretch',
             hide_index=True,
             height=360,
         )
