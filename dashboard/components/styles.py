@@ -312,20 +312,22 @@ section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; 
 /* ── Sidebar styles ───────────────────────────────────── */
 .sb-brand {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
+    font-size: 1.1rem;
     letter-spacing: 0.2em;
     color: #ff8a4c;
-    padding: 14px 12px 3px;
+    padding: 14px 14px 2px;
     display: block;
+    line-height: 1.2;
 }
-
-.sb-section {
+.sb-tagline {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: #a8bcdf;
-    letter-spacing: 0.16em;
+    font-size: 10px;
+    color: #4a5878;
+    letter-spacing: 0.15em;
     text-transform: uppercase;
-    padding: 12px 12px 5px;
+    padding: 0 14px 12px;
+    display: block;
+    border-bottom: 1px solid #1a2035;
 }
 .sb-cat-header {
     font-family: 'IBM Plex Mono', monospace;
