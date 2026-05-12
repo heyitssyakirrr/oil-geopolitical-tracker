@@ -354,6 +354,9 @@ section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; 
     text-overflow: ellipsis !important;
     color: #c8d3ea !important;
 }
+[data-testid="stSidebarCollapseButton"] {
+    display: none !important;
+}
 
 /* ── Sidebar radio nav ────────────────────────────────── */
 div[role="radiogroup"] label[data-baseweb="radio"] { margin: 0 !important; padding: 0 !important; }
