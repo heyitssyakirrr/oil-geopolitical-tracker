@@ -58,13 +58,6 @@ PAGE_RENDERERS = {
     "Pipeline":           lambda: pipeline.render(runs),
 }
 
-st.markdown(
-    '<div class="dash-global-title">'
-    '📡 GLOBAL CRISIS &nbsp;·&nbsp; COMMODITY TRACKER'
-    '</div>',
-    unsafe_allow_html=True,
-)
-
 # dict dispatch here is cleaner than long if/elif chains for routing
 # dict.get(key, default)
 renderer = PAGE_RENDERERS.get(st.session_state.page, PAGE_RENDERERS["Overview"]) # now is a function
