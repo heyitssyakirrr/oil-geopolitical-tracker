@@ -42,6 +42,7 @@ def render_sidebar(runs) -> None:
         # Brand
         st.markdown(
             '<span class="sb-brand">📡 GLOBAL CRISIS - COMMODITY TRACKER</span>'
+            '<span class="sb-tagline">Crisis Signals, Market Moves. </span>',
             unsafe_allow_html=True,
         )
 
