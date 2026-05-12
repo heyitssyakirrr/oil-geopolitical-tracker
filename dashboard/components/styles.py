@@ -12,7 +12,7 @@ GLOBAL_CSS = """
 html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; font-size: 15px; }
 .stApp { background: #080a0f; color: #d4cfc8 ; }
 .block-container { padding: 0.4rem 0.9rem 0.8rem 0.9rem !important; max-width: 100% !important; width: 100% !important; }
-header[data-testid="stHeader"] { display: none !important; }
+header[data-testid="stHeader"] { visibility: hidden !important; height: 0 !important; }
 
 div[data-testid="stPlotlyChart"] { width: 100% !important; }
 div[data-testid="stPlotlyChart"] > div { width: 100% !important; }
