@@ -5,6 +5,7 @@ Cross-commodity normalized comparison + volatility ranking + correlation heatmap
 Works across all 13 commodities regardless of category.
 """
 
+import pandas as pd
 import streamlit as st
 
 from components import (
@@ -27,14 +28,14 @@ def render(prices, events):
         & (prices["date"] <= end_dt)
     ].copy()
 
-    def normalize(group):
+    result_parts = []
+    for name, group in comp_df.groupby("commodity_name"):
         base = group["close"].iloc[0]
         if base != 0:
-            group       = group.copy()
+            group = group.copy()
             group["norm"] = group["close"] / base * 100
-        return group
-
-    comp_df = comp_df.groupby("commodity_name", group_keys=False).apply(normalize).reset_index(drop=True)
+        result_parts.append(group)
+    comp_df = pd.concat(result_parts, ignore_index=True)
     comp_df["label"] = comp_df["commodity_name"].map(label_map).fillna(comp_df["commodity_name"])
 
     st.markdown(
