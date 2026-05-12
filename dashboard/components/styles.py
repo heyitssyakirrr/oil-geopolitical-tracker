@@ -52,6 +52,14 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     min-width: 245px !important;
     max-width: 285px !important;
 }
+[data-testid="stSidebarHeader"] {
+    padding: 0 !important;
+    min-height: 0 !important;
+    height: 0 !important;
+}
+[data-testid="stLogoSpacer"] {
+    display: none !important;
+}
 [data-testid="stSidebar"] [data-testid="stElementContainer"] {
     width: 100% !important;
 }
