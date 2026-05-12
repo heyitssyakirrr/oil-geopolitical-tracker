@@ -27,12 +27,12 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
         if not (start_dt <= ev["date"] <= end_dt):
             continue
         d30 = ev["date"] + pd.Timedelta(days=30)
-        p0 = filtered.loc[filtered["date"] == ev["date"], "close"]
+        nearest = filtered.loc[filtered["date"] >= ev["date"], "close"]
         p30 = filtered.loc[filtered["date"] <= d30, "close"]
-        if p0.empty or p30.empty:
+        if nearest.empty or p30.empty:
             continue
 
-        base_price, after_price = p0.iloc[0], p30.iloc[-1]
+        base_price, after_price = nearest.iloc[0], p30.iloc[-1]
         pct = (after_price - base_price) / base_price * 100
         impact_rows.append(
             {
