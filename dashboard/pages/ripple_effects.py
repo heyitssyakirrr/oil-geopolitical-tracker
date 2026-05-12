@@ -66,31 +66,45 @@ def _category_badge(commodity: str) -> str:
 
 
 def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
-    # ── Controls ──────────────────────────────────────────────────────────────
-    # Build a full filter bar just for date range, then add custom controls
-    filters  = render_filter_bar(
-        "rip", prices,
-        show_commodity=True,
-        show_events_toggle=False,
-        show_ma_toggle=False,
-    )
-    sel_com  = filters.commodity
-    start_dt = filters.start_dt
-    end_dt   = filters.end_dt
+    # ── Inline filter bar with lag slider ────────────────────────────────────
+    min_d = prices["date"].min().date()
+    max_d = prices["date"].max().date()
+    all_commodities = sorted(prices["commodity_name"].unique())
 
-    # Lag slider in a second row
-    st.markdown('<div style="padding: 0; margin: 0;">', unsafe_allow_html=True)
-    lag_days = st.slider(
-        "Lag window (days)",
-        min_value=7, max_value=90, value=30, step=7,
-        key="rip_lag",
-        help="How many days ahead to measure the downstream price change after a shock in the source.",
-    )
+    st.markdown('<div class="filter-bar">', unsafe_allow_html=True)
+    col_com, col_date, col_lag = st.columns([2, 3, 2])
+
+    with col_com:
+        default_idx = all_commodities.index("brent_crude") if "brent_crude" in all_commodities else 0
+        sel_com = st.selectbox(
+            "Commodity", all_commodities, index=default_idx,
+            format_func=lambda c: (
+                f"{COMMODITY_META.get(c, {}).get('icon', '🔹')} "
+                f"{COMMODITY_META.get(c, {}).get('label', c)}"
+            ),
+            key="rip_com", label_visibility="visible",
+        )
+
+    with col_date:
+        dr = st.date_input(
+            "Range", value=[min_d, max_d],
+            min_value=min_d, max_value=max_d,
+            key="rip_dr", label_visibility="visible",
+        )
+        start_dt = pd.to_datetime(dr[0])
+        end_dt   = pd.to_datetime(dr[1]) if len(dr) == 2 else pd.to_datetime(max_d)
+
+    with col_lag:
+        lag_days = st.slider(
+            "Lag (days)", min_value=7, max_value=90, value=30, step=7,
+            key="rip_lag", label_visibility="visible",
+        )
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
     meta           = COMMODITY_META.get(sel_com, {})
     ripple_targets = meta.get("ripple", [])
 
-    # Filter prices to window
     window = prices[
         (prices["date"] >= start_dt)
         & (prices["date"] <= end_dt)

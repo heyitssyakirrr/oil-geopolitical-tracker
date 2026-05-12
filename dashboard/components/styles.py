@@ -146,8 +146,18 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     color: #c8d3ea !important; font-size: 12px !important;
     font-family: 'IBM Plex Mono', monospace !important;
 }
-.filter-bar + div {
+.filter-bar + div,
+.filter-bar + div > div {
     margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+/* Collapse Streamlit wrappers between filter-bar and page-header */
+.filter-bar + div[data-testid="stVerticalBlockBorderWrapper"],
+.filter-bar + div[data-testid="element-container"] {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    min-height: 0 !important;
 }
 
 /* ── KPI Grid — 5 across ──────────────────────────────── */

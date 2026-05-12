@@ -56,7 +56,7 @@ def render_filter_bar(
                     f"{COMMODITY_META.get(c, {}).get('label', c)}"
                 ),
                 key=f"{page_key}_com",
-                label_visibility="collapsed",
+                label_visibility="visible",
             )
         ci += 1
 
@@ -67,7 +67,7 @@ def render_filter_bar(
             min_value=min_d,
             max_value=max_d,
             key=f"{page_key}_dr",
-            label_visibility="collapsed",
+            label_visibility="visible",
         )
         start_dt = pd.to_datetime(dr[0])
         end_dt   = pd.to_datetime(dr[1]) if len(dr) == 2 else pd.to_datetime(max_d)
@@ -78,11 +78,13 @@ def render_filter_bar(
 
     if show_events_toggle:
         with cols[ci]:
+            st.markdown('<div style="height:21px"></div>', unsafe_allow_html=True)  # spacer to match label height
             show_ev = st.checkbox("Events", value=True, key=f"{page_key}_ev")
         ci += 1
 
     if show_ma_toggle:
         with cols[ci]:
+            st.markdown('<div style="height:21px"></div>', unsafe_allow_html=True)  # spacer to match label height
             show_ma = st.checkbox("Moving Avg", value=True, key=f"{page_key}_ma")
 
     st.markdown("</div>", unsafe_allow_html=True)
