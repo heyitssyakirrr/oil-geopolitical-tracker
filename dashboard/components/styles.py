@@ -52,35 +52,21 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     min-width: 245px !important;
     max-width: 285px !important;
 }
-[data-testid="stSidebar"] > div:first-child {
-    padding-top: 0 !important;
-    margin-top: 0 !important;
-}
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 [data-testid="stSidebarNav"] { height: 0 !important; overflow: hidden !important; }
-}
+section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; }
+[data-testid="stSidebar"] div.stButton { width: 100% !important; }
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
     background: #111520 !important;
     border: 1px solid #1a2035 !important;
     border-radius: 4px !important;
     width: 100% !important;
     height: 40px !important;
-    display: block !important;
-}
-
-[data-testid="stSidebar"] div.stButton {
-    width: 100% !important;
-}
-[data-testid="stSidebarContent"] > div:first-child {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-}
-
-section[data-testid="stSidebar"] > div:first-child {
-    padding-top: 0 !important;
-}
-[data-testid="stSidebar"] button p {
     text-align: left !important;
+    justify-content: flex-start !important;
+    padding-left: 14px !important;
+}
+[data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] p {
     font-size: 14px !important;
     white-space: nowrap !important;
     overflow: hidden !important;
