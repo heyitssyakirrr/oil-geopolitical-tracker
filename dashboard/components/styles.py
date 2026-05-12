@@ -322,12 +322,20 @@ section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; 
 .sb-tagline {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
-    color: #4a5878;
+    color: #8faad0;
     letter-spacing: 0.15em;
     text-transform: uppercase;
     padding: 0 14px 12px;
     display: block;
     border-bottom: 1px solid #1a2035;
+}
+.sb-section {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: #8faad0;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 12px 12px 5px;
 }
 .sb-cat-header {
     font-family: 'IBM Plex Mono', monospace;
