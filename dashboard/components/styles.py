@@ -12,7 +12,8 @@ GLOBAL_CSS = """
 html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; font-size: 15px; }
 .stApp { background: #080a0f; color: #d4cfc8 ; }
 .block-container { padding: 0.4rem 0.9rem 0.8rem 0.9rem !important; max-width: 100% !important; width: 100% !important; }
-header[data-testid="stHeader"] { visibility: hidden !important; height: 0 !important; }
+header[data-testid="stHeader"] { background: transparent !important; }
+header[data-testid="stHeader"]::before { display: none !important; }
 
 div[data-testid="stPlotlyChart"] { width: 100% !important; }
 div[data-testid="stPlotlyChart"] > div { width: 100% !important; }
@@ -52,6 +53,7 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     max-width: 285px !important;
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
+[data-testid="stSidebarNav"] { height: 0 !important; overflow: hidden !important; }
 [data-testid="stSidebar"] button {
     text-align: left !important;
     justify-content: flex-start !important;
