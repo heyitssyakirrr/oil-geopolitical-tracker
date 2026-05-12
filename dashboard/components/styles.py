@@ -69,11 +69,6 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     color: #c8d3ea !important;
 }
 
-[data-testid="stSidebar"][aria-expanded="false"] {
-    width: 60 !important;
-    min-width: 60 !important;
-}
-
 /* ── Page header ──────────────────────────────────────── */
 .page-header {
     padding: 12px 0 10px 0;
