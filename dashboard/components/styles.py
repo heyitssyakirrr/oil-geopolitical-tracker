@@ -60,6 +60,11 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     padding-left: 14px !important;
     width: 100% !important;
 }
+[data-testid="stSidebar"] button[kind="secondary"] {
+    background: #111520 !important;
+    border: 1px solid #1a2035 !important;
+    border-radius: 4px !important;
+}
 [data-testid="stSidebar"] button p {
     text-align: left !important;
     font-size: 14px !important;
@@ -67,6 +72,11 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     color: #c8d3ea !important;
+}
+[data-testid="stSidebar"][aria-expanded="false"] {
+    width: 0px !important;
+    min-width: 0px !important;
+    overflow: hidden !important;
 }
 
 /* ── Page header ──────────────────────────────────────── */
