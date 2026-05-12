@@ -44,28 +44,11 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 [data-testid="stSidebar"] {
     background: #0a0d14 !important;
     border-right: 1px solid #1a2035 !important;
-    width: 15vw !important;
     min-width: 230px !important;
     max-width: 270px !important;
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 [data-testid="stSidebarNav"] { display: none !important; }
-}
-[data-testid="collapsedControl"],
-button[data-testid="stSidebarCollapseButton"] {
-    background: #0a0d14 !important;
-    border: 1px solid #1a2035 !important;
-    color: #ff8a4c !important;
-    position: fixed !important;
-    top: 10px !important;
-    left: 0px !important;
-    z-index: 9999 !important;
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-[data-testid="collapsedControl"] svg,
-button[data-testid="stSidebarCollapseButton"] svg { fill: #ff8a4c !important; }
 
 /* ── Main content ─────────────────────────────────────── */
 .main-content { padding: 0rem 1.8rem 3.2rem 1.8rem; max-width: 14200px; margin: 0 auto; }

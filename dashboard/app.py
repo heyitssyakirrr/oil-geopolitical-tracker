@@ -18,7 +18,7 @@ st.set_page_config(
     page_title="War & Oil Tracker",
     page_icon="🛢️",
     layout="wide", # use the full browser width instead of the default narrow centred column
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
