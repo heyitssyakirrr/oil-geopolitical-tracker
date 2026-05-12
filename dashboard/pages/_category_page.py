@@ -211,7 +211,7 @@ def render_category_page(
     if not cat_window.empty:
         st.plotly_chart(
             category_price_chart(cat_window, events, start_dt, end_dt, show_ev),
-            width='stretch',
+            use_container_width=True,
         )
 
     # ── Selected commodity price history ─────────────────────────────────────
@@ -230,7 +230,7 @@ def render_category_page(
     if not filtered.empty:
         st.plotly_chart(
             price_history_chart(filtered, events, meta, start_dt, end_dt, show_ma, show_ev),
-            width='stretch',
+            use_container_width=True,
         )
 
     # ── Ripple chain ──────────────────────────────────────────────────────────

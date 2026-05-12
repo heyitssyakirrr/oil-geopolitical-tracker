@@ -215,7 +215,7 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
     if not window_prices.empty:
         st.plotly_chart(
             overview_normalized_chart(prices, events, start_dt, end_dt, show_ev),
-            width='stretch',
+            use_container_width=True,
         )
 
     # ── Selected commodity price history ──────────────────────────────────────
@@ -230,7 +230,7 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
     if not filtered.empty:
         st.plotly_chart(
             price_history_chart(filtered, events, meta, start_dt, end_dt, show_ma, show_ev),
-            width='stretch',
+            use_container_width=True,
         )
 
     st.markdown('</div>', unsafe_allow_html=True)

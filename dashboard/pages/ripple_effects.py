@@ -135,7 +135,7 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
     )
     st.plotly_chart(
         ripple_lag_bar(window, sel_com, all_other, lag_days=lag_days),
-        width='stretch',
+        use_container_width=True,
     )
 
     # ── Scatter matrix for direct ripple targets ──────────────────────────────
@@ -166,7 +166,7 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
                     )
                     st.plotly_chart(
                         ripple_scatter(window, sel_com, tgt, lag_days=lag_days),
-                        width='stretch',
+                        use_container_width=True,
                     )
 
     # ── Category-level ripple map — text summary ──────────────────────────────

@@ -48,6 +48,26 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     max-width: 270px !important;
 }
 [data-testid="stSidebarContent"] { padding: 0 !important; }
+[data-testid="stSidebarNav"] { display: none !important; }
+[data-testid="stSidebar"] button {
+    text-align: left !important;
+    justify-content: flex-start !important;
+    padding-left: 12px !important;
+    width: 100% !important;
+}
+[data-testid="stSidebar"] button p {
+    text-align: left !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    color: #c8d3ea !important;
+}
+
+[data-testid="stSidebar"][aria-expanded="false"] {
+    width: 0 !important;
+    min-width: 0 !important;
+}
 
 /* ── Main content ─────────────────────────────────────── */
 .main-content { padding: 0rem 1.8rem 3.2rem 1.8rem; max-width: 14200px; margin: 0 auto; }
