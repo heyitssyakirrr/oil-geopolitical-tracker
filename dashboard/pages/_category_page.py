@@ -128,8 +128,6 @@ def render_category_page(
         & (cat_prices["date"] <= end_dt)
     ].copy()
 
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
-
     # ── Page header ───────────────────────────────────────────────────────────
     st.markdown(
         f'<div class="page-header">'

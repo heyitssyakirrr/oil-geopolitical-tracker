@@ -10,8 +10,11 @@ GLOBAL_CSS = """
 /* ── Base reset ────────────────────────────────────────── */
 html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
 .stApp { background: #080a0f; color: #c8c2b8; }
-.block-container { padding: 0.4rem 0.9rem 0.8rem 0.9rem !important; max-width: 100% !important; }
+.block-container { padding: 0.4rem 0.9rem 0.8rem 0.9rem !important; max-width: 100% !important; width: 100% !important; }
 header[data-testid="stHeader"] { display: none !important; }
+
+div[data-testid="stPlotlyChart"] { width: 100% !important; }
+div[data-testid="stPlotlyChart"] > div { width: 100% !important; }
 
 div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 .element-container:empty { margin: 0 !important; padding: 0 !important; display: none !important; }
@@ -22,7 +25,7 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     font-size: 0.88rem;
     letter-spacing: 0.28em;
     color: #ff8a4c;
-    padding: 9px 1.8rem 7px 1.8rem;
+    padding: 9px 0 7px 0;
     border-bottom: 1px solid #1a2035;
     margin-bottom: 0;
     background: #080a0f;
@@ -68,9 +71,6 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     width: 0 !important;
     min-width: 0 !important;
 }
-
-/* ── Main content ─────────────────────────────────────── */
-.main-content { padding: 0rem 1.8rem 3.2rem 1.8rem; max-width: 14200px; margin: 0 auto; }
 
 /* ── Page header ──────────────────────────────────────── */
 .page-header {
@@ -119,8 +119,8 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     border: 1px solid #1e2640;
     border-radius: 6px;
     padding: 10px 14px;
-    margin-bottom: 8px;
-    margin-top: 4px;
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
 .filter-bar div[data-baseweb="select"] > div,
 .filter-bar div[data-baseweb="input"] {
@@ -145,6 +145,9 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 .filter-bar .stCheckbox label span {
     color: #c8d3ea !important; font-size: 12px !important;
     font-family: 'IBM Plex Mono', monospace !important;
+}
+.filter-bar + div {
+    margin-top: 0 !important;
 }
 
 /* ── KPI Grid — 5 across ──────────────────────────────── */
@@ -457,7 +460,8 @@ label[data-testid="stWidgetLabel"] p {
 
 /* ── Sidebar breathing room ───────────────────────────── */
 [data-testid="stSidebar"] + section.main .block-container {
-    padding-left: 1.4rem !important;
+    padding-left: 2.5rem !important;
+    padding-right: 2.5rem !important;
 }
 
 /* ── Scrollbar ────────────────────────────────────────── */

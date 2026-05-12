@@ -79,6 +79,7 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
     end_dt   = filters.end_dt
 
     # Lag slider in a second row
+    st.markdown('<div style="padding: 0; margin: 0;">', unsafe_allow_html=True)
     lag_days = st.slider(
         "Lag window (days)",
         min_value=7, max_value=90, value=30, step=7,
@@ -97,7 +98,6 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
 
     all_other = [c for c in prices["commodity_name"].unique() if c != sel_com]
 
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
 
     # ── Page header ───────────────────────────────────────────────────────────
     st.markdown(

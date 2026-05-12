@@ -57,7 +57,6 @@ def render(prices: pd.DataFrame, _events=None) -> None:
     ].copy()
     filtered = _prepare_price_analysis_frame(filtered)
 
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
     st.markdown(
         f'<div class="page-header">'
         f'<div class="page-title">📈 PRICE ANALYSIS</div>'
@@ -68,7 +67,6 @@ def render(prices: pd.DataFrame, _events=None) -> None:
 
     if filtered.empty:
         st.info("No data for selected range.")
-        st.markdown('</div>', unsafe_allow_html=True)
         return
 
     # Candlestick

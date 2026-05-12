@@ -14,7 +14,6 @@ def render(prices: pd.DataFrame, events: pd.DataFrame) -> None:
         & (prices["date"] <= end_dt)
     ].copy()
 
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
     st.markdown(
         '<div class="page-header"><div class="page-title">💥 EVENT INTELLIGENCE</div>'
         '<div class="page-subtitle">▸ 30-day post-event market impact analysis</div></div>',

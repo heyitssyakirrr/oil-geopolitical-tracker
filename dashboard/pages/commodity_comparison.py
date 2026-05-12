@@ -37,7 +37,6 @@ def render(prices, events):
     comp_df = comp_df.groupby("commodity_name", group_keys=False).apply(normalize)
     comp_df["label"] = comp_df["commodity_name"].map(label_map).fillna(comp_df["commodity_name"])
 
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
     st.markdown(
         '<div class="page-header">'
         '<div class="page-title">🔄 COMMODITY COMPARISON</div>'

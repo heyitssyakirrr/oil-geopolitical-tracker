@@ -13,7 +13,6 @@ def _prepare_runs_table(runs):
 
 
 def render(runs):
-    st.markdown('<div class="main-content">', unsafe_allow_html=True)
     st.markdown(
         '<div class="page-header"><div class="page-title">🔧 PIPELINE</div>'
         '<div class="page-subtitle">▸ ingestion run status and row volume</div></div>',
