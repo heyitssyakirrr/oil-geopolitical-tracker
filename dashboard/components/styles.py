@@ -11,7 +11,7 @@ GLOBAL_CSS = """
 /* ── Base reset ────────────────────────────────────────── */
 html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; font-size: 15px; }
 .stApp { background: #080a0f; color: #d4cfc8 ; }
-.block-container { padding: 0.4rem 0.9rem 0.8rem 0.9rem !important; max-width: 100% !important; width: 100% !important; }
+.block-container { padding: 0.4rem 2.5rem 0.8rem 2.5rem !important; max-width: 100% !important; width: 100% !important; }
 header[data-testid="stHeader"] { background: transparent !important; }
 header[data-testid="stHeader"]::before { display: none !important; }
 
@@ -52,6 +52,10 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     min-width: 245px !important;
     max-width: 285px !important;
 }
+[data-testid="stSidebar"] > div:first-child {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
 [data-testid="stSidebarContent"] { padding: 0 !important; }
 [data-testid="stSidebarNav"] { height: 0 !important; overflow: hidden !important; }
 [data-testid="stSidebar"] button {
@@ -64,6 +68,8 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     background: #111520 !important;
     border: 1px solid #1a2035 !important;
     border-radius: 4px !important;
+    width: 100% !important;
+    height: 40px !important;
 }
 [data-testid="stSidebar"] button p {
     text-align: left !important;

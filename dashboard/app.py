@@ -21,8 +21,6 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.write(st.__version__)
-
 if "sidebar_state" not in st.session_state:
     st.session_state.sidebar_state = "expanded"
 
