@@ -6,7 +6,7 @@ CSS is organised into clearly labelled sections:
     1.  Base reset & app shell
     2.  Global title bar
     3.  Sidebar — shell & header row
-    4.  Sidebar — brand block
+    4.  Sidebar — brand block (inside stSidebarContent)
     5.  Sidebar — nav section labels
     6.  Sidebar — nav buttons (default + active)
     7.  Sidebar — pipeline run footer
@@ -90,9 +90,10 @@ div[data-testid="stVerticalBlockSeparator"],
      stSidebarHeader  — contains st.logo() slot + collapse button
      stSidebarContent — contains everything inside `with st.sidebar:`
    
-   We keep the header row as thin as possible and hide its logo
-   slot entirely; all branding lives inside stSidebarContent so
-   it disappears naturally when the sidebar collapses.
+   The header row is given a proper height so the logo renders
+   inside the sidebar (not above/outside it).  When collapsed,
+   the header and content are both hidden — only the expand
+   arrow remains visible.
 ───────────────────────────────────────────────────────────── */
 
 /* Sidebar shell */
@@ -103,30 +104,48 @@ div[data-testid="stVerticalBlockSeparator"],
     max-width: 268px !important;
 }
 
-/* Collapsed sidebar: zero width, nothing visible */
+/* Collapsed sidebar: zero width — everything disappears */
 [data-testid="stSidebar"][aria-expanded="false"] {
     width: 0 !important;
     min-width: 0 !important;
     overflow: hidden !important;
 }
 
-/* Header row — make it as unobtrusive as possible */
+/* Header row — visible, fixed height so logo renders inside the sidebar */
 [data-testid="stSidebarHeader"] {
     background: #0a0d14 !important;
-    border-bottom: none !important;     /* brand block has its own border */
+    border-bottom: 1px solid #1e2640 !important;
     padding: 0 8px !important;
-    min-height: 0 !important;
-    height: 0 !important;
-    overflow: hidden !important;        /* fully collapse the header row */
+    min-height: 52px !important;
+    height: 52px !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: visible !important;   /* was hidden — that pushed the logo out */
 }
 
-/* Hide the logo slot (we use a blank 1×1 SVG anyway) */
-[data-testid="stLogo"],
+/* Hide header row when sidebar is collapsed so only the expand arrow shows */
+[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarHeader"] {
+    display: none !important;
+}
+
+/* Logo image — fill the available width of the header slot, medium size */
+[data-testid="stLogo"] {
+    display: flex !important;
+    align-items: center !important;
+}
+[data-testid="stLogo"] img {
+    height: 40px !important;
+    width: auto !important;
+    max-width: 200px !important;
+    object-fit: contain !important;
+}
+
+/* Hide the logo spacer element (Streamlit adds it for layout; not needed here) */
 [data-testid="stLogoSpacer"] {
     display: none !important;
 }
 
-/* Sidebar content area — remove all default padding; we control it ourselves */
+/* Sidebar content area — remove default padding; we control it */
 [data-testid="stSidebarContent"] {
     padding: 0 !important;
     overflow-y: auto !important;
@@ -149,12 +168,11 @@ section[data-testid="stSidebar"] > div:first-child {
 
 
 /* ─────────────────────────────────────────────────────────────
-   4. SIDEBAR — BRAND BLOCK
+   4. SIDEBAR — BRAND BLOCK  (inside stSidebarContent)
    
-   Sits at the very top of stSidebarContent.
-   Matches the dashboard global title: Bebas Neue, #ff8a4c.
-   Disappears automatically when sidebar collapses (it's inside
-   stSidebarContent, not stSidebarHeader).
+   Only used if you render a manual brand block via HTML.
+   The primary brand mark is now the st.logo() SVG in the
+   header row (section 3 above).
 ───────────────────────────────────────────────────────────── */
 .sb-brand {
     display: flex;
@@ -162,7 +180,7 @@ section[data-testid="stSidebar"] > div:first-child {
     gap: 10px;
     padding: 18px 4px 16px;
     border-bottom: 1px solid #1e2640;
-    margin-bottom: 0;               /* section labels provide the gap below */
+    margin-bottom: 0;
 }
 .sb-brand-icon {
     font-size: 1.6rem;
@@ -194,8 +212,7 @@ p.sb-section-label {
     color: #4a5878 !important;
     letter-spacing: 0.2em !important;
     text-transform: uppercase !important;
-    /* Tight spacing: a little top breathing room, minimal bottom gap */
-    padding: 12px 4px 4px !important;
+    padding: 10px 4px 3px !important;
     margin: 0 !important;
     line-height: 1 !important;
 }
@@ -204,26 +221,25 @@ p.sb-section-label {
 /* ─────────────────────────────────────────────────────────────
    6. SIDEBAR — NAV BUTTONS
    
-   Each button is wrapped in a div.sb-nav-item (or --active).
-   Left/right padding on the wrapper creates the breathing room
-   between buttons and sidebar edges.
+   Each button is wrapped in div.sb-nav-item (or --active).
+   - Vertical padding is kept tight (2px margin between items).
+   - Horizontal padding is generous so text doesn't hug the edges.
 ───────────────────────────────────────────────────────────── */
 
-/* Wrapper adds horizontal padding — this is what keeps buttons
-   from touching the sidebar edges */
+/* Wrapper — controls spacing between buttons and sidebar edges */
 div.sb-nav-item,
 div.sb-nav-item--active {
-    padding: 0 8px;
-    margin-bottom: 2px;
+    padding: 0 10px;    /* increased horizontal padding from 8px → 10px */
+    margin-bottom: 1px; /* reduced from 2px → 1px for tighter vertical rhythm */
 }
 
 /* ── Default button ── */
 div.sb-nav-item [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 38px !important;
+    height: 32px !important;        /* reduced from 38px → 32px */
     text-align: left !important;
     justify-content: flex-start !important;
-    padding-left: 12px !important;
+    padding-left: 14px !important;  /* slightly more inner left padding */
     border-radius: 5px !important;
     background: transparent !important;
     border: 1px solid transparent !important;
@@ -237,15 +253,14 @@ div.sb-nav-item [data-testid="stBaseButton-secondary"]:hover {
 /* ── Active button ── */
 div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 38px !important;
+    height: 32px !important;        /* reduced from 38px → 32px */
     text-align: left !important;
     justify-content: flex-start !important;
     background: #0f1520 !important;
     border: 1px solid #1e2640 !important;
     border-left: 3px solid #ff8a4c !important;
     border-radius: 5px !important;
-    /* Compensate for the wider left border so text stays aligned */
-    padding-left: 10px !important;
+    padding-left: 12px !important;  /* compensates for wider left border */
 }
 
 /* ── Button label text ── */

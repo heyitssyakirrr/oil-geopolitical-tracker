@@ -9,7 +9,7 @@ DOM structure (Streamlit):
 
 The brand title is rendered as an SVG inside st.logo() so it lives in the
 header row, right next to the collapse button.  When the sidebar collapses,
-the entire stSidebarContent disappears and only the expand arrow is shown.
+CSS hides stSidebarHeader entirely so only the expand arrow remains visible.
 """
 
 import streamlit as st
@@ -41,9 +41,9 @@ def render_sidebar(runs) -> None:
     """Render sidebar navigation with brand header, nav groups, and pipeline footer."""
 
     # ── Brand SVG in st.logo() → renders inside stSidebarHeader ─────────────
-    # Sits left of the collapse button.  SVG encodes the full title so no
-    # external fonts are needed.  CSS in styles.py sizes the <img> to fill
-    # the available width of the header slot.
+    # size="large" ensures the logo image is tall enough to be legible at the
+    # 52px header height we set in CSS.  The SVG encodes the full title so no
+    # external fonts are needed.
     BRAND_SVG = (
         "data:image/svg+xml,"
         "%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='44' viewBox='0 0 200 44'%3E"
@@ -60,7 +60,7 @@ def render_sidebar(runs) -> None:
         "font-weight='900' letter-spacing='2' fill='%23ff8a4c'%3ECOMMODITY TRACKER%3C/text%3E"
         "%3C/svg%3E"
     )
-    st.logo(BRAND_SVG, size="medium")
+    st.logo(BRAND_SVG, size="large")
 
     # ── Sidebar content ───────────────────────────────────────────────────────
     with st.sidebar:
