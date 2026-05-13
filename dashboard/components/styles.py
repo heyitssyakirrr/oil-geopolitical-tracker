@@ -11,7 +11,7 @@ GLOBAL_CSS = """
 /* ── Base reset ────────────────────────────────────────── */
 html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; font-size: 15px; }
 .stApp { background: #080a0f; color: #d4cfc8 ; }
-.block-container { padding: 3.5rem 2.5rem 3.5rem 2.5rem !important; max-width: 100% !important; width: 100% !important; }
+.block-container { padding: 0.4rem 2.5rem 0.8rem 2.5rem !important; max-width: 100% !important; width: 100% !important; }
 header[data-testid="stHeader"] { background: transparent !important; }
 header[data-testid="stHeader"]::before { display: none !important; }
 
@@ -29,7 +29,7 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     color: #ff8a4c;
     padding: 11px 0 9px 0;
     border-bottom: 1px solid #1a2035;
-    margin-bottom: 0;
+    margin-bottom: 25px;
     background: #080a0f;
     display: flex;
     align-items: center;
