@@ -49,31 +49,51 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    margin: 4px 6px 0 0 !important;
+    position: relative !important;
+    margin: 6px 8px 0 auto !important;   /* push it away from the edge */
 }
 
-[data-testid="stSidebarCollapseButton"] button {
+/* The actual button element */
+[data-testid="stSidebarCollapseButton"] > button {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
     background: transparent !important;
     border: 1px solid #1a2035 !important;
     border-radius: 4px !important;
     color: #8faad0 !important;
-    width: 28px !important;
-    height: 28px !important;
-    padding: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    position: relative !important;
 }
 
-[data-testid="stSidebarCollapseButton"] button:hover {
+/* Make the hover highlight sit ON the button, not offset from it */
+[data-testid="stSidebarCollapseButton"] > button:hover {
+    background: #111520 !important;
     border-color: #ff8a4c !important;
     color: #ff8a4c !important;
+}
+
+/* Neutralise Streamlit's default ripple/focus overlay that causes the offset box */
+[data-testid="stSidebarCollapseButton"] > button::before,
+[data-testid="stSidebarCollapseButton"] > button::after {
+    display: none !important;
+}
+
+button[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 [data-testid="stSidebar"] [data-testid="stElementContainer"] {
     width: 100% !important;
 }
 [data-testid="stSidebarContent"] { 
-    padding: 0 !important; 
+    padding: 0 0 0 0 !important; 
+}
+[data-testid="stSidebarContent"] > div:first-child {
+    padding: 0 10px !important;
 }
 [data-testid="stSidebarNav"] { 
     height: 0 !important;   
