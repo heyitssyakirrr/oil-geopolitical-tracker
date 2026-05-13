@@ -42,11 +42,12 @@ def render_sidebar(runs) -> None:
         
         # Brand
         st.markdown(
-            '<span class="sb-brand">📡 GLOBAL CRISIS<br>COMMODITY TRACKER</span>',
+            '<div class="sb-header-row">'
+            '<span class="sb-brand">📡 GLOBAL CRISIS<br>COMMODITY TRACKER</span>'
+            '</div>',
             unsafe_allow_html=True,
         )
         
-
         # Navigation groups
         for group_label, pages in _NAV_GROUPS:
             st.markdown(

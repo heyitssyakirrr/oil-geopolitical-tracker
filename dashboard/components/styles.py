@@ -122,7 +122,7 @@ button[data-testid="collapsedControl"] {
 /* Sidebar content — pulled up by header height to eliminate gap */
 [data-testid="stSidebarContent"] {
     padding: 0 !important;
-    margin-top: -22px !important;
+    margin-top: -15px !important;
 }
 [data-testid="stSidebarContent"] > div:first-child {
     padding: 0 25px !important;
@@ -166,6 +166,12 @@ section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; 
 }
 
 /* ── Sidebar — brand & labels ─────────────────────────── */
+/* Brand row — collapse button floats into the right side of this row */
+.sb-header-row {
+    display: flex;
+    align-items: flex-start;
+    padding-right: 40px;  /* leave space for the button on the right */
+}
 .sb-brand {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.1rem;
