@@ -52,10 +52,22 @@ def render_sidebar(runs) -> None:
     # the .sb-logo-label text pseudo-element instead.
     LOGO_SVG = (
         "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
-        "width='32' height='32' viewBox='0 0 32 32'%3E"
-        "%3Crect width='32' height='32' rx='4' fill='%23ff8a4c'/%3E"
-        "%3Ctext x='16' y='22' font-size='18' text-anchor='middle' "
-        "font-family='serif' fill='%230a0d14'%3E💻%3C/text%3E"
+        "width='160' height='36' viewBox='0 0 160 36'%3E"
+        # computer icon box
+        "%3Crect x='0' y='2' width='32' height='32' rx='5' fill='%23111520' "
+        "stroke='%231e2640' stroke-width='1'/%3E"
+        "%3Ctext x='16' y='24' font-size='19' text-anchor='middle' "
+        "font-family='Apple Color Emoji%2C Segoe UI Emoji%2C sans-serif'%3E"
+        "%F0%9F%92%BB"   # 💻 percent-encoded
+        "%3C/text%3E"
+        # "MAIN MENU" label
+        "%3Ctext x='42' y='14' font-size='10' font-family='IBM Plex Mono%2C "
+        "monospace' font-weight='600' fill='%23c8d3ea' letter-spacing='2'%3E"
+        "MAIN MENU%3C/text%3E"
+        # subtle sub-label
+        "%3Ctext x='42' y='28' font-size='9' font-family='IBM Plex Mono%2C "
+        "monospace' fill='%234a5878' letter-spacing='1'%3E"
+        "NAVIGATION%3C/text%3E"
         "%3C/svg%3E"
     )
     st.logo(LOGO_SVG, size="medium")
