@@ -122,7 +122,7 @@ button[data-testid="collapsedControl"] {
 /* Sidebar content — pulled up by header height to eliminate gap */
 [data-testid="stSidebarContent"] {
     padding: 0 !important;
-    margin-top: -15px !important;
+    margin-top: 20px !important;
 }
 [data-testid="stSidebarContent"] > div:first-child {
     padding: 0 25px !important;
