@@ -269,22 +269,20 @@ p.sb-section-label {
    6. SIDEBAR — NAV BUTTONS
 ───────────────────────────────────────────────────────────── */
 
-/* Wrapper */
+/* Wrapper — controls left/right gap between button and sidebar edge */
 div.sb-nav-item,
 div.sb-nav-item--active {
-    padding: 0 16px;
-    margin-bottom: 1px;
+    padding: 0 16px;        /* ← increase for more horizontal space */
+    margin-bottom: 2px;     /* ← gap between each button */
 }
 
 /* ── Default button ── */
 div.sb-nav-item [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 5px !important;
-    min-height: 5px !important;
-    line-height: 5px !important;
+    height: 30px !important;
+    min-height: unset !important;
     text-align: left !important;
     justify-content: flex-start !important;
-    padding: 4px 8px !important;
     border-radius: 5px !important;
     background: transparent !important;
     border: 1px solid transparent !important;
@@ -298,16 +296,23 @@ div.sb-nav-item [data-testid="stBaseButton-secondary"]:hover {
 /* ── Active button ── */
 div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 5px !important;
-    min-height: 5px !important;
-    line-height: 5px !important;
+    height: 30px !important;
+    min-height: unset !important;
     text-align: left !important;
     justify-content: flex-start !important;
     background: #0f1520 !important;
     border: 1px solid #1e2640 !important;
     border-left: 3px solid #ff8a4c !important;
     border-radius: 5px !important;
-    padding: 4px 8px !important;
+}
+
+/* ── Kill Streamlit's internal span padding — this is what was blocking all changes ── */
+div.sb-nav-item [data-testid="stBaseButton-secondary"] span,
+div.sb-nav-item--active [data-testid="stBaseButton-secondary"] span {
+    padding: 0 8px !important;     /* ← left/right padding inside button */
+    line-height: 30px !important;
+    display: flex !important;
+    align-items: center !important;
 }
 
 /* ── Button label text ── */
@@ -318,6 +323,9 @@ div.sb-nav-item--active [data-testid="stBaseButton-secondary"] p {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 30px !important;
 }
 div.sb-nav-item [data-testid="stBaseButton-secondary"] p {
     color: #7a8faf !important;
@@ -328,13 +336,6 @@ div.sb-nav-item [data-testid="stBaseButton-secondary"]:hover p {
 div.sb-nav-item--active [data-testid="stBaseButton-secondary"] p {
     color: #ffffff !important;
     font-weight: 600 !important;
-}
-div.sb-nav-item [data-testid="stBaseButton-secondary"] span,
-div.sb-nav-item--active [data-testid="stBaseButton-secondary"] span {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    display: flex !important;
-    align-items: center !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
