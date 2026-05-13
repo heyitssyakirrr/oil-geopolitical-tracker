@@ -4,11 +4,12 @@ sidebar.py
 Sidebar navigation using Streamlit's native elements.
 
 DOM structure (Streamlit):
-    [data-testid="stSidebarHeader"]   ← st.logo() + collapse button
-    [data-testid="stSidebarContent"]  ← everything inside `with st.sidebar:`
-        .sb-brand-block               ← 📡 icon + two-line title
-        nav groups                    ← section labels + nav buttons
-        .sb-run-footer                ← last pipeline run
+    [data-testid="stSidebarHeader"]   ← st.logo() (brand SVG) + collapse button
+    [data-testid="stSidebarContent"]  ← nav groups + pipeline footer
+
+The brand title is rendered as an SVG inside st.logo() so it lives in the
+header row, right next to the collapse button.  When the sidebar collapses,
+the entire stSidebarContent disappears and only the expand arrow is shown.
 """
 
 import streamlit as st
@@ -39,34 +40,31 @@ _NAV_GROUPS = [
 def render_sidebar(runs) -> None:
     """Render sidebar navigation with brand header, nav groups, and pipeline footer."""
 
-    # ── Header row — st.logo() is the only official way to inject into
-    #    stSidebarHeader (next to the collapse button).
-    #    We use a transparent 1×1 SVG so the slot is occupied but invisible;
-    #    the real branding lives in stSidebarContent below.
-    BLANK_SVG = (
-        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
-        "width='1' height='1'%3E%3C/svg%3E"
+    # ── Brand SVG in st.logo() → renders inside stSidebarHeader ─────────────
+    # Sits left of the collapse button.  SVG encodes the full title so no
+    # external fonts are needed.  CSS in styles.py sizes the <img> to fill
+    # the available width of the header slot.
+    BRAND_SVG = (
+        "data:image/svg+xml,"
+        "%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='44' viewBox='0 0 200 44'%3E"
+        # Icon circle background
+        "%3Ccircle cx='20' cy='22' r='18' fill='%230c0f18' stroke='%231e2640' stroke-width='1.2'/%3E"
+        # 📡 emoji
+        "%3Ctext x='20' y='28' font-size='18' text-anchor='middle' "
+        "font-family='Apple Color Emoji%2CSegoe UI Emoji%2Csans-serif'%3E%F0%9F%93%A1%3C/text%3E"
+        # Line 1
+        "%3Ctext x='46' y='18' font-size='15' font-family='Arial Black%2CArial%2Csans-serif' "
+        "font-weight='900' letter-spacing='2' fill='%23ff8a4c'%3EGLOBAL CRISIS%3C/text%3E"
+        # Line 2
+        "%3Ctext x='46' y='36' font-size='12' font-family='Arial Black%2CArial%2Csans-serif' "
+        "font-weight='900' letter-spacing='2' fill='%23ff8a4c'%3ECOMMODITY TRACKER%3C/text%3E"
+        "%3C/svg%3E"
     )
-    st.logo(BLANK_SVG, size="small")
+    st.logo(BRAND_SVG, size="medium")
 
     # ── Sidebar content ───────────────────────────────────────────────────────
     with st.sidebar:
 
-        # Brand block — mirrors the dashboard's global title style
-        st.markdown(
-            """
-            <div class="sb-brand">
-                <span class="sb-brand-icon">📡</span>
-                <div class="sb-brand-text">
-                    <span class="sb-brand-line1">GLOBAL CRISIS</span>
-                    <span class="sb-brand-line2">COMMODITY TRACKER</span>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        # Nav groups
         for group_label, pages in _NAV_GROUPS:
             st.markdown(
                 f'<p class="sb-section-label">{group_label}</p>',
