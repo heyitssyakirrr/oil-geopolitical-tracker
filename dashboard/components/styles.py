@@ -11,7 +11,7 @@ GLOBAL_CSS = """
 /* ── Base reset ────────────────────────────────────────── */
 html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; font-size: 15px; }
 .stApp { background: #080a0f; color: #d4cfc8 ; }
-.block-container { padding: 4rem 2.5rem 4rem 2.5rem !important; max-width: 100% !important; width: 100% !important; }
+.block-container { padding: 3.5rem 2.5rem 3.5rem 2.5rem !important; max-width: 100% !important; width: 100% !important; }
 header[data-testid="stHeader"] { background: transparent !important; }
 header[data-testid="stHeader"]::before { display: none !important; }
 
@@ -20,6 +20,30 @@ div[data-testid="stPlotlyChart"] > div { width: 100% !important; }
 
 div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 .element-container:empty { margin: 0 !important; padding: 0 !important; display: none !important; }
+
+/* ── Global title bar ──────────────────────────────────── */
+.dash-global-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.15rem;
+    letter-spacing: 0.28em;
+    color: #ff8a4c;
+    padding: 11px 0 9px 0;
+    border-bottom: 1px solid #1a2035;
+    margin-bottom: 0;
+    background: #080a0f;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dash-global-title .title-sep {
+    color: #2a3350;
+    margin: 0 4px;
+}
+.dash-global-title .title-sub {
+    color: #4a5878;
+    font-size: 1rem;
+    letter-spacing: 0.18em;
+}
 
 /* ── Sidebar ──────────────────────────────────────────── */
 [data-testid="stSidebar"] {
