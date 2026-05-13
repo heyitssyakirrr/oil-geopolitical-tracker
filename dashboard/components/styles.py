@@ -72,7 +72,7 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     visibility: visible !important;
     opacity: 1 !important;
     position: fixed !important;      /* fixed instead of absolute */
-    top: 32px !important;
+    top: 36px !important;
     left: 197px !important;          /* sidebar is ~245px wide, button at right edge */
     z-index: 9999 !important;
     margin: 0 !important;
@@ -120,7 +120,7 @@ button[data-testid="collapsedControl"] {
 }
 [data-testid="stSidebarContent"] > div:first-child {
     padding: 0px 25px !important;
-    margin-top: -21px !important;
+    margin-top: -24px !important;
 }
 [data-testid="stSidebarNav"] { 
     height: 0 !important;   
