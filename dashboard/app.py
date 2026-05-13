@@ -60,7 +60,7 @@ PAGE_RENDERERS = {
 
 st.markdown(
     '<div class="dash-global-title">'
-    '📡 GLOBAL CRISIS &nbsp;·&nbsp; COMMODITY TRACKER'
+    '📡 GLOBAL CRISIS &thinsp;—&thinsp; COMMODITY TRACKER'
     '</div>',
     unsafe_allow_html=True,
 )
