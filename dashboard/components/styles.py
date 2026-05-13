@@ -29,7 +29,7 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     color: #ff8a4c;
     padding: 11px 0 9px 0;
     border-bottom: 1px solid #1a2035;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     background: #080a0f;
     display: flex;
     align-items: center;
@@ -120,7 +120,7 @@ button[data-testid="collapsedControl"] {
 }
 [data-testid="stSidebarContent"] > div:first-child {
     padding: 0px 25px !important;
-    margin-top: -24px !important;
+    margin-top: -26px !important;
 }
 [data-testid="stSidebarNav"] { 
     height: 0 !important;   
