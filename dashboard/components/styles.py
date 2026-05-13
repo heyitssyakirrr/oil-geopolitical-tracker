@@ -186,7 +186,7 @@ div[data-testid="stVerticalBlockSeparator"],
     overflow-y: auto !important;
 }
 [data-testid="stSidebarContent"] > div:first-child {
-    padding: 0 12px 16px !important;
+    padding: 0 20px 16px !important;
 }
 [data-testid="stSidebar"] [data-testid="stElementContainer"] {
     width: 100% !important;
@@ -310,25 +310,6 @@ div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
     padding: 4px 8px !important;
 }
 
-div.sb-nav-item [data-testid="stBaseButton-secondary"],
-div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
-    height: 28px !important;
-    min-height: 28px !important;
-    max-height: 28px !important;
-    line-height: 28px !important;
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-}
-
-/* Target the inner span that Streamlit wraps the button content in */
-div.sb-nav-item [data-testid="stBaseButton-secondary"] > div,
-div.sb-nav-item--active [data-testid="stBaseButton-secondary"] > div {
-    padding-top: 0 !important;
-    padding-bottom: 0 !important;
-    height: 28px !important;
-    line-height: 28px !important;
-}
-
 /* ── Button label text ── */
 div.sb-nav-item [data-testid="stBaseButton-secondary"] p,
 div.sb-nav-item--active [data-testid="stBaseButton-secondary"] p {
@@ -348,7 +329,13 @@ div.sb-nav-item--active [data-testid="stBaseButton-secondary"] p {
     color: #ffffff !important;
     font-weight: 600 !important;
 }
-
+div.sb-nav-item [data-testid="stBaseButton-secondary"] span,
+div.sb-nav-item--active [data-testid="stBaseButton-secondary"] span {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+}
 
 /* ─────────────────────────────────────────────────────────────
    7. SIDEBAR — PIPELINE RUN FOOTER
