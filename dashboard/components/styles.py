@@ -52,10 +52,12 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     padding: 0 !important;
     min-height: 0 !important;
     height: auto !important;
-    background: transparent !important;
+    background: #0a0d14 !important;
     border: none !important;
     display: flex !important;
     justify-content: flex-end !important;
+    position: relative !important;
+    z-index: 99999 !important;
 }
 
 /* Collapse button — stays in normal flow, no position:fixed */
@@ -64,7 +66,8 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     visibility: visible !important;
     opacity: 1 !important;
     margin: 0 !important;
-    z-index: 9999 !important;
+    position: relative !important;
+    z-index: 99999 !important;
 }
 [data-testid="stSidebarCollapseButton"] > button {
     display: flex !important;
