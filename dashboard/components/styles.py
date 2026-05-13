@@ -279,8 +279,8 @@ div.sb-nav-item--active {
 /* ── Default button ── */
 div.sb-nav-item [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 15px !important;
-    min-height: 15px !important;
+    height: 5px !important;
+    min-height: 5px !important;
     text-align: left !important;
     justify-content: flex-start !important;
     padding: 4px 8px !important;
@@ -297,8 +297,8 @@ div.sb-nav-item [data-testid="stBaseButton-secondary"]:hover {
 /* ── Active button ── */
 div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 15px !important;
-    min-height: 15px !important;
+    height: 5px !important;
+    min-height: 5px !important;
     text-align: left !important;
     justify-content: flex-start !important;
     background: #0f1520 !important;
