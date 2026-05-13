@@ -73,7 +73,7 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     opacity: 1 !important;
     position: fixed !important;      /* fixed instead of absolute */
     top: 49px !important;
-    left: 197px !important;          /* sidebar is ~245px wide, button at right edge */
+    left: 170px !important;          /* sidebar is ~245px wide, button at right edge */
     z-index: 9999 !important;
     margin: 0 !important;
 }
