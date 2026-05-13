@@ -72,7 +72,7 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     visibility: visible !important;
     opacity: 1 !important;
     position: fixed !important;      /* fixed instead of absolute */
-    top: 30px !important;
+    top: 40px !important;
     left: 197px !important;          /* sidebar is ~245px wide, button at right edge */
     z-index: 9999 !important;
     margin: 0 !important;
