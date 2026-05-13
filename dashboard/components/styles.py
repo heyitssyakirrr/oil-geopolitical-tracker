@@ -82,8 +82,24 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 [data-testid="stSidebarCollapseButton"] > button > div > div,
 [data-testid="stSidebarCollapseButton"] * div {
     display: none !important;
+    pointer-events: none !important;
 }
 
+/* Kill the wrapper div hover at its ghost position */
+[data-testid="stSidebarCollapseButton"] > div {
+    pointer-events: none !important;
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+[data-testid="stSidebarCollapseButton"] > div:hover {
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+    border: none !important;
+}
 
 [data-testid="stSidebarCollapseButton"] > button {
     display: flex !important;
