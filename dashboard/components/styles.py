@@ -24,12 +24,12 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 /* ── Global title bar ──────────────────────────────────── */
 .dash-global-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.15rem;
+    font-size: 3rem;
     letter-spacing: 0.28em;
     color: #ff8a4c;
     padding: 11px 0 9px 0;
     border-bottom: 1px solid #1a2035;
-    margin-bottom: 25px;
+    margin-bottom: 10px;
     background: #080a0f;
     display: flex;
     align-items: center;
