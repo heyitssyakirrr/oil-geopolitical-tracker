@@ -111,6 +111,21 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     box-shadow: none !important;
 }
 
+[data-testid="stBaseButton-headerNoPadding"]:hover {
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+[data-testid="stSidebarCollapseButton"] div:hover,
+[data-testid="stSidebarCollapseButton"] span:hover,
+[data-testid="stSidebarCollapseButton"] div,
+[data-testid="stSidebarCollapseButton"] span {
+    background: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 [data-testid="stSidebarCollapseButton"] > button:focus-visible {
     outline: none !important;
     box-shadow: none !important;
