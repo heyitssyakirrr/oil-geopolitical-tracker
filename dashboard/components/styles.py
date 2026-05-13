@@ -36,61 +36,97 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 .dash-global-title .title-sep { color: #2a3350; margin: 0 4px; }
 .dash-global-title .title-sub { color: #4a5878; font-size: 1rem; letter-spacing: 0.18em; }
 
-/* ── Sidebar — structure ──────────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   SIDEBAR
+   DOM order:
+     [data-testid="stSidebarHeader"]   ← logo + collapse button
+     [data-testid="stSidebarContent"]  ← nav + footer
+   ══════════════════════════════════════════════════════════ */
+
+/* Sidebar shell */
 [data-testid="stSidebar"] {
     background: #0a0d14 !important;
     border-right: 1px solid #1a2035 !important;
-    min-width: 245px !important;
-    max-width: 285px !important;
+    min-width: 240px !important;
+    max-width: 270px !important;
 }
 
-/* Header row: holds logo slot + collapse button side by side */
+/* ── Header row ───────────────────────────────────────────
+   Contains: logo slot (left)  |  collapse button (right)
+   We style this row so both items sit on the same baseline.
+   ────────────────────────────────────────────────────────*/
 [data-testid="stSidebarHeader"] {
     background: #0a0d14 !important;
     border-bottom: 1px solid #1a2035 !important;
-    padding: 0 10px 0 14px !important;
-    min-height: 48px !important;
-    height: 48px !important;
+    padding: 0 10px 0 12px !important;
+    min-height: 52px !important;
+    height: 52px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
+    gap: 8px !important;
+    box-sizing: border-box !important;
 }
 
-/* Logo image inside the header — we replace it visually with CSS brand text */
-[data-testid="stSidebarHeader"] img {
-    display: none !important;   /* hide the actual logo image */
-}
-
-/* The logo container still takes up space so the collapse button stays right */
-[data-testid="stLogoSpacer"],
+/* Logo container — fills the left side of the header row */
 [data-testid="stLogo"] {
-    flex: 1 !important;
+    flex: 1 1 auto !important;
     display: flex !important;
     align-items: center !important;
-    min-height: 0 !important;
+    gap: 10px !important;
+    text-decoration: none !important;
+    overflow: hidden !important;
+    min-width: 0 !important;
 }
 
-/* Collapse button — stays in header row, right side */
-[data-testid="stSidebarCollapseButton"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+/* The <img> Streamlit renders from st.logo() — we show this as the icon */
+[data-testid="stLogo"] img {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
     flex-shrink: 0 !important;
+    display: block !important;
+}
+
+/* "Main Menu" text injected via ::after so no extra HTML needed */
+[data-testid="stLogo"]::after {
+    content: "Main Menu";
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #c8d3ea;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* stLogoSpacer appears when there is no logo — hide it */
+[data-testid="stLogoSpacer"] {
+    display: none !important;
+}
+
+/* Collapse / expand button — right side of header row */
+[data-testid="stSidebarCollapseButton"] {
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
     margin: 0 !important;
+    padding: 0 !important;
 }
 [data-testid="stSidebarCollapseButton"] > button {
+    width: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+    background: #111520 !important;
+    border: 1px solid #1e2640 !important;
+    border-radius: 4px !important;
+    color: #8faad0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    width: 32px !important;
-    height: 32px !important;
-    padding: 0 !important;
-    background: #111520 !important;
-    border: 1px solid #1a2035 !important;
-    border-radius: 4px !important;
-    color: #8faad0 !important;
     outline: none !important;
     box-shadow: none !important;
+    transition: border-color 0.15s, color 0.15s !important;
 }
 [data-testid="stSidebarCollapseButton"] > button:hover {
     background: #1a2035 !important;
@@ -103,118 +139,120 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     outline: none !important;
     box-shadow: none !important;
 }
-/* Kill BaseWeb ripple overlay */
+/* Suppress BaseWeb ripple overlay inside the button */
 [data-testid="stSidebarCollapseButton"] button > div,
 [data-testid="stSidebarCollapseButton"] button > div * {
     background: transparent !important;
-    outline: none !important;
-    box-shadow: none !important;
     border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
     pointer-events: none !important;
 }
 
-/* Collapsed sidebar expand button */
+/* Collapsed-state expand button (shown when sidebar is hidden) */
 button[data-testid="collapsedControl"] {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
 }
 
-/* Sidebar content area */
+/* ── Sidebar content area ─────────────────────────────── */
 [data-testid="stSidebarContent"] {
     padding: 0 !important;
+    overflow-y: auto !important;
 }
 [data-testid="stSidebarContent"] > div:first-child {
-    padding: 0 16px !important;
+    padding: 8px 12px 16px !important;
 }
-[data-testid="stSidebar"] [data-testid="stElementContainer"] { width: 100% !important; }
-[data-testid="stSidebarNav"] { height: 0 !important; overflow: hidden !important; }
-section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; }
+[data-testid="stSidebar"] [data-testid="stElementContainer"] {
+    width: 100% !important;
+}
+/* Hide Streamlit's auto-generated nav (we build our own) */
+[data-testid="stSidebarNav"] {
+    height: 0 !important;
+    overflow: hidden !important;
+}
+section[data-testid="stSidebar"] > div:first-child {
+    padding-top: 0 !important;
+}
+/* Collapsed sidebar — zero width */
 [data-testid="stSidebar"][aria-expanded="false"] {
-    width: 0px !important;
-    min-width: 0px !important;
+    width: 0 !important;
+    min-width: 0 !important;
     overflow: hidden !important;
 }
 
-/* ── Sidebar — brand block (below header row) ─────────── */
-.sb-brand-block {
-    display: flex;
-    flex-direction: column;
-    padding: 14px 2px 10px;
-    border-bottom: 1px solid #1a2035;
-    margin-bottom: 4px;
-    gap: 0;
-}
-.sb-brand {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.15rem;
-    letter-spacing: 0.22em;
-    color: #ff8a4c;
-    line-height: 1.25;
-    display: block;
-}
-.sb-divider {
-    height: 0;
-    border: none;
-    margin: 0;
+/* ── Section labels ───────────────────────────────────── */
+p.sb-section-label {
+    font-family: 'IBM Plex Mono', monospace !important;
+    font-size: 10px !important;
+    color: #4a5878 !important;
+    letter-spacing: 0.2em !important;
+    text-transform: uppercase !important;
+    padding: 14px 4px 5px !important;
+    margin: 0 !important;
+    line-height: 1 !important;
 }
 
-/* ── Sidebar — nav buttons ────────────────────────────── */
-.sb-section {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    color: #4a5878;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    padding: 12px 2px 4px;
-    margin: 0;
+/* ── Nav item wrapper ─────────────────────────────────── */
+div.sb-nav-item,
+div.sb-nav-item--active {
+    margin-bottom: 2px !important;
 }
 
-/* Wrapper div — active state draws the left accent bar */
-.sb-btn-wrap [data-testid="stBaseButton-secondary"] {
-    background: #0d1018 !important;
-    border: 1px solid #151c2c !important;
-    border-radius: 4px !important;
+/* Default button style */
+div.sb-nav-item [data-testid="stBaseButton-secondary"],
+div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
     height: 38px !important;
     text-align: left !important;
     justify-content: flex-start !important;
-    padding-left: 12px !important;
-    margin-bottom: 2px !important;
-    transition: all 0.12s ease !important;
+    padding-left: 10px !important;
+    border-radius: 4px !important;
+    transition: background 0.12s, border-color 0.12s !important;
 }
-.sb-btn-wrap [data-testid="stBaseButton-secondary"]:hover {
+div.sb-nav-item [data-testid="stBaseButton-secondary"] {
+    background: transparent !important;
+    border: 1px solid transparent !important;
+}
+div.sb-nav-item [data-testid="stBaseButton-secondary"]:hover {
     background: #111827 !important;
-    border-color: #ff8a4c55 !important;
+    border-color: #1e2a40 !important;
 }
-.sb-btn-wrap [data-testid="stBaseButton-secondary"] p {
+
+/* Active page — orange left accent */
+div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
+    background: #0f1520 !important;
+    border: 1px solid #1e2640 !important;
+    border-left: 3px solid #ff8a4c !important;
+    padding-left: 8px !important;   /* compensate for thicker left border */
+}
+
+/* Button label text */
+div.sb-nav-item [data-testid="stBaseButton-secondary"] p,
+div.sb-nav-item--active [data-testid="stBaseButton-secondary"] p {
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 13px !important;
-    color: #8a9bbf !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
-.sb-btn-wrap [data-testid="stBaseButton-secondary"]:hover p {
+div.sb-nav-item [data-testid="stBaseButton-secondary"] p {
+    color: #7a8faf !important;
+}
+div.sb-nav-item [data-testid="stBaseButton-secondary"]:hover p {
     color: #c8d3ea !important;
 }
-
-/* Active page button */
-.sb-btn-active [data-testid="stBaseButton-secondary"] {
-    background: #131828 !important;
-    border-color: #ff8a4c !important;
-    border-left: 3px solid #ff8a4c !important;
-}
-.sb-btn-active [data-testid="stBaseButton-secondary"] p {
+div.sb-nav-item--active [data-testid="stBaseButton-secondary"] p {
     color: #ffffff !important;
     font-weight: 600 !important;
 }
 
-/* Pipeline run status footer */
-.sb-run-status {
-    padding: 10px 4px 8px;
+/* ── Pipeline run footer ──────────────────────────────── */
+.sb-run-footer {
+    padding: 12px 4px 8px;
     border-top: 1px solid #1a2035;
-    margin-top: 14px;
+    margin-top: 12px;
 }
 .sb-run-label {
     font-family: 'IBM Plex Mono', monospace;
@@ -222,11 +260,12 @@ section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; 
     color: #4a5878;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
 }
 .sb-run-value {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
+    letter-spacing: 0.04em;
 }
 
 /* ── Sidebar breathing room ───────────────────────────── */
