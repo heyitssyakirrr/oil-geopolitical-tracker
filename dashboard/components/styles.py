@@ -68,26 +68,21 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     box-sizing: border-box !important;
 }
 
-/* Logo container — left side of header row */
+/* Logo container — icon only, left side of header row */
 [data-testid="stLogo"] {
-    flex: 1 1 auto !important;
+    flex: 0 0 auto !important;
     display: flex !important;
     align-items: center !important;
-    min-width: 0 !important;
-    overflow: visible !important;
 }
-
-/* The <img> Streamlit renders — sized to match the SVG viewBox */
 [data-testid="stLogo"] img {
-    width: auto !important;
-    height: 36px !important;
-    max-width: 180px !important;
+    width: 32px !important;
+    height: 32px !important;
     display: block !important;
 }
-
-/* Remove ::after — text is now drawn inside the SVG itself */
-[data-testid="stLogo"]::after {
-    content: none !important;
+/* Hide logo in the collapsed sidebar bar — only expand arrow should show */
+[data-testid="collapsedControl"] [data-testid="stLogo"],
+[data-testid="collapsedControl"] img {
+    display: none !important;
 }
 
 /* stLogoSpacer appears when there is no logo — hide it */
@@ -96,54 +91,32 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 }
 
 /* Collapse / expand button — right side of header row */
-[data-testid="stSidebarCollapseButton"] {
-    flex-shrink: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    margin: 0 !important;
-    padding: 0 !important;
+/* ── Sidebar title block ──────────────────────────────
+   Inside stSidebarContent so it vanishes on collapse.
+   ──────────────────────────────────────────────────── */
+.sb-title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    padding: 14px 4px 12px;
+    border-bottom: 1px solid #1a2035;
+    margin-bottom: 4px;
 }
-[data-testid="stSidebarCollapseButton"] > button {
-    width: 30px !important;
-    height: 30px !important;
-    padding: 0 !important;
-    background: #111520 !important;
-    border: 1px solid #1e2640 !important;
-    border-radius: 4px !important;
-    color: #8faad0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    outline: none !important;
-    box-shadow: none !important;
-    transition: border-color 0.15s, color 0.15s !important;
+.sb-title-line1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.2em;
+    color: #ff8a4c;
+    line-height: 1.25;
+    display: block;
 }
-[data-testid="stSidebarCollapseButton"] > button:hover {
-    background: #1a2035 !important;
-    border-color: #ff8a4c !important;
-    color: #ff8a4c !important;
-}
-[data-testid="stSidebarCollapseButton"] > button:focus,
-[data-testid="stSidebarCollapseButton"] > button:focus-visible,
-[data-testid="stSidebarCollapseButton"] > button:active {
-    outline: none !important;
-    box-shadow: none !important;
-}
-/* Suppress BaseWeb ripple overlay inside the button */
-[data-testid="stSidebarCollapseButton"] button > div,
-[data-testid="stSidebarCollapseButton"] button > div * {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    outline: none !important;
-    pointer-events: none !important;
-}
-
-/* Collapsed-state expand button (shown when sidebar is hidden) */
-button[data-testid="collapsedControl"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
+.sb-title-line2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.25rem;
+    letter-spacing: 0.2em;
+    color: #ff8a4c;
+    line-height: 1.25;
+    display: block;
 }
 
 /* ── Sidebar content area ─────────────────────────────── */
