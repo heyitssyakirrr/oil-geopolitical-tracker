@@ -51,35 +51,33 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     border-right: 1px solid #1a2035 !important;
     min-width: 245px !important;
     max-width: 285px !important;
+    position: relative !important;   /* ADD THIS */
 }
-/* Hide the logo spacer that causes the empty gap */
+
 [data-testid="stLogoSpacer"] {
     display: none !important;
 }
 
-/* Shrink header to just fit the collapse button — no extra space */
 [data-testid="stSidebarHeader"] {
     padding: 0 !important;
     min-height: 0 !important;
     height: 0 !important;
     overflow: visible !important;
-    position: relative !important;
     background: transparent !important;
+    border: none !important;
 }
 
-/* Make the collapse button visible and styled */
 [data-testid="stSidebarCollapseButton"] {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    position: absolute !important;
+    position: fixed !important;      /* fixed instead of absolute */
     top: 8px !important;
-    right: 8px !important;
-    z-index: 999 !important;
+    left: 197px !important;          /* sidebar is ~245px wide, button at right edge */
+    z-index: 9999 !important;
     margin: 0 !important;
 }
 
-/* The actual button element */
 [data-testid="stSidebarCollapseButton"] > button {
     display: flex !important;
     align-items: center !important;
@@ -87,21 +85,18 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     width: 32px !important;
     height: 32px !important;
     padding: 0 !important;
-    background: transparent !important;
+    background: #0a0d14 !important;
     border: 1px solid #1a2035 !important;
     border-radius: 4px !important;
     color: #8faad0 !important;
-    position: relative !important;
 }
 
-/* Make the hover highlight sit ON the button, not offset from it */
 [data-testid="stSidebarCollapseButton"] > button:hover {
     background: #111520 !important;
     border-color: #ff8a4c !important;
     color: #ff8a4c !important;
 }
 
-/* Neutralise Streamlit's default ripple/focus overlay that causes the offset box */
 [data-testid="stSidebarCollapseButton"] > button::before,
 [data-testid="stSidebarCollapseButton"] > button::after {
     display: none !important;
