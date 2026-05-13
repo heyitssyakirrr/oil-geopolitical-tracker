@@ -61,11 +61,10 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
 [data-testid="stSidebarHeader"] {
     padding: 0 !important;
     min-height: 0 !important;
-    height: auto !important;          /* let it size to its content */
-    display: flex !important;
-    align-items: center !important;
-    justify-content: flex-end !important;
-    background: #0a0d14 !important;
+    height: 0 !important;
+    overflow: visible !important;
+    position: relative !important;
+    background: transparent !important;
 }
 
 /* Make the collapse button visible and styled */
@@ -73,8 +72,11 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    position: relative !important;
-    margin: 6px 8px 0 auto !important;   /* push it away from the edge */
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    z-index: 999 !important;
+    margin: 0 !important;
 }
 
 /* The actual button element */
