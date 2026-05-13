@@ -86,12 +86,17 @@ div[data-testid="stVerticalBlockSeparator"],
 /* ─────────────────────────────────────────────────────────────
    3. SIDEBAR — SHELL & HEADER ROW
 
-   stSidebarHeader holds only the collapse/expand button.
-   We collapse its height to zero and hide the logo slot entirely
-   because the brand block lives inside stSidebarContent instead.
-   When the sidebar is collapsed, everything inside it disappears
-   automatically — only the expand arrow (rendered outside the
-   sidebar by Streamlit) remains.
+   Strategy: give stSidebarHeader a fixed height that matches
+   the brand block height exactly.  The brand block in
+   stSidebarContent uses a negative top margin to pull itself
+   up behind the header row, so the collapse button (inside
+   stSidebarHeader) and the brand text appear on the same
+   visual row with zero gap between them.
+
+   stSidebarHeader: 52px tall, holds only the collapse button
+   .sb-brand:       margin-top: -52px to slide up behind it
+   Result:          one seamless row — icon+title on left,
+                    collapse button on right.
 ───────────────────────────────────────────────────────────── */
 
 /* Sidebar shell */
@@ -102,27 +107,61 @@ div[data-testid="stVerticalBlockSeparator"],
     max-width: 268px !important;
 }
 
-/* Collapsed sidebar: zero width, nothing visible */
+/* Collapsed: zero width, nothing visible */
 [data-testid="stSidebar"][aria-expanded="false"] {
     width: 0 !important;
     min-width: 0 !important;
     overflow: hidden !important;
 }
 
-/* Collapse the header row — we don't use st.logo() so there's
-   nothing useful here; the collapse button is rendered separately
-   by Streamlit and doesn't sit inside this element. */
+/* Header row — real height, matches brand block height.
+   Transparent so the brand block behind it shows through. */
 [data-testid="stSidebarHeader"] {
-    display: none !important;
+    background: transparent !important;
+    border-bottom: none !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 0 8px 0 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;  /* push collapse btn to the right */
+    position: relative !important;
+    z-index: 10 !important;               /* sits above the brand block */
+    overflow: visible !important;
 }
 
-/* Hide logo slots (not used, but belt-and-suspenders) */
+/* Style the collapse button to match our theme */
+[data-testid="stSidebarHeader"] button {
+    background: transparent !important;
+    border: none !important;
+    color: #4a5878 !important;
+    padding: 4px !important;
+    border-radius: 4px !important;
+}
+[data-testid="stSidebarHeader"] button:hover {
+    background: #1a2035 !important;
+    color: #c8d3ea !important;
+}
+
+/* Expand button (when sidebar is collapsed) — also themed */
+[data-testid="stSidebarCollapsedControl"] button {
+    background: #0a0d14 !important;
+    border: 1px solid #1e2640 !important;
+    border-radius: 4px !important;
+    color: #7a8faf !important;
+}
+[data-testid="stSidebarCollapsedControl"] button:hover {
+    background: #111520 !important;
+    color: #c8d3ea !important;
+}
+
+/* Hide logo — not used */
 [data-testid="stLogo"],
 [data-testid="stLogoSpacer"] {
     display: none !important;
 }
 
-/* Sidebar content area */
+/* Sidebar content */
 [data-testid="stSidebarContent"] {
     padding: 0 !important;
     overflow-y: auto !important;
@@ -147,20 +186,26 @@ section[data-testid="stSidebar"] > div:first-child {
 /* ─────────────────────────────────────────────────────────────
    4. SIDEBAR — BRAND BLOCK
 
-   Sits at the top of stSidebarContent (rendered via st.markdown).
-   Disappears automatically when the sidebar collapses.
-   Matches the main dashboard title style: Bebas Neue, #ff8a4c.
+   Pulled up by margin-top: -52px to sit behind stSidebarHeader.
+   Its own height is 52px so the border-bottom lands exactly
+   where the header row ends — creating one seamless header band.
+   The collapse button (z-index: 10) renders on top of it.
 ───────────────────────────────────────────────────────────── */
 .sb-brand {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 16px 4px 14px;
+    height: 52px;                   /* match stSidebarHeader height */
+    margin-top: -52px;              /* pull up behind the header row */
+    padding: 0 8px 0 14px;
     border-bottom: 1px solid #1e2640;
-    margin-bottom: 0;
+    background: #0a0d14;            /* same as sidebar bg */
+    position: relative;
+    z-index: 1;                     /* below the collapse button */
+    box-sizing: border-box;
 }
 .sb-brand-icon {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     line-height: 1;
     flex-shrink: 0;
 }
@@ -172,14 +217,14 @@ section[data-testid="stSidebar"] > div:first-child {
 }
 .sb-brand-line1 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     letter-spacing: 0.18em;
     color: #ff8a4c;
     display: block;
 }
 .sb-brand-line2 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.05rem;
+    font-size: 1rem;
     letter-spacing: 0.18em;
     color: #ff8a4c;
     display: block;
@@ -203,21 +248,13 @@ p.sb-section-label {
 
 /* ─────────────────────────────────────────────────────────────
    6. SIDEBAR — NAV BUTTONS
-
-   Wrapper div controls outer spacing:
-     - horizontal padding increased so text has breathing room
-       from sidebar edges
-     - vertical margin kept tight to reduce gap between buttons
-
-   Button height reduced from 38px → 32px to reduce vertical
-   padding inside each item.
 ───────────────────────────────────────────────────────────── */
 
 /* Wrapper */
 div.sb-nav-item,
 div.sb-nav-item--active {
-    padding: 0 10px;    /* more horizontal room */
-    margin-bottom: 1px; /* tighter vertical rhythm */
+    padding: 0 10px;
+    margin-bottom: 1px;
 }
 
 /* ── Default button ── */
