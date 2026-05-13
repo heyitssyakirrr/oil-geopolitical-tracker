@@ -39,14 +39,13 @@ def render_sidebar(runs) -> None:
     """Render the sidebar — brand, nav groups, last-run status."""
     # with —> activates the sidebar context before the block, deactivates it after
     with st.sidebar:
-        '''
+        
         # Brand
         st.markdown(
-            '<span class="sb-brand">📡 GLOBAL CRISIS<br>COMMODITY TRACKER</span>'
-            '<span class="sb-tagline">Crisis Signals, Market Moves.</span>',
+            '<span class="sb-brand">📡 GLOBAL CRISIS<br>COMMODITY TRACKER</span>',
             unsafe_allow_html=True,
         )
-        '''
+        
 
         # Navigation groups
         for group_label, pages in _NAV_GROUPS:
