@@ -70,7 +70,7 @@ div[data-testid="stVerticalBlockSeparator"],
 ───────────────────────────────────────────────────────────── */
 .dash-global-title {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem;
+    font-size: 2.3rem;
     letter-spacing: 0.28em;
     color: #ff8a4c;
     padding: 11px 0 9px 0;
