@@ -102,6 +102,18 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     background: #111520 !important;
     border-color: #ff8a4c !important;
     color: #ff8a4c !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+[data-testid="stSidebarCollapseButton"] > button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+[data-testid="stSidebarCollapseButton"] > button:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 [data-testid="stSidebarCollapseButton"] > button::before,
