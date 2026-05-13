@@ -114,7 +114,7 @@ button[data-testid="collapsedControl"] {
     padding: 0 0 0 0 !important; 
 }
 [data-testid="stSidebarContent"] > div:first-child {
-    padding: 15px 10px !important;
+    padding: 0px 10px !important;
     margin-top: -8px !important;
 }
 [data-testid="stSidebarNav"] { 
