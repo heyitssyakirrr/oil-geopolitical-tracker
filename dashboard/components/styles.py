@@ -272,7 +272,7 @@ p.sb-section-label {
 /* Wrapper */
 div.sb-nav-item,
 div.sb-nav-item--active {
-    padding: 0 4px;
+    padding: 0 16px;
     margin-bottom: 1px;
 }
 
@@ -281,6 +281,7 @@ div.sb-nav-item [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
     height: 5px !important;
     min-height: 5px !important;
+    line-height: 5px !important;
     text-align: left !important;
     justify-content: flex-start !important;
     padding: 4px 8px !important;
@@ -299,6 +300,7 @@ div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
     height: 5px !important;
     min-height: 5px !important;
+    line-height: 5px !important;
     text-align: left !important;
     justify-content: flex-start !important;
     background: #0f1520 !important;
