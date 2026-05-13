@@ -97,6 +97,10 @@ div[data-testid="stVerticalBlockSeparator"],
    .sb-brand:       margin-top: -52px to slide up behind it
    Result:          one seamless row — icon+title on left,
                     collapse button on right.
+
+   FIX: overflow changed from visible → hidden, width/box-sizing
+   added, and stSidebarCollapseButton explicitly constrained so
+   the collapse button cannot escape the sidebar's bounds.
 ───────────────────────────────────────────────────────────── */
 
 /* Sidebar shell */
@@ -115,7 +119,9 @@ div[data-testid="stVerticalBlockSeparator"],
 }
 
 /* Header row — real height, matches brand block height.
-   Transparent so the brand block behind it shows through. */
+   Transparent so the brand block behind it shows through.
+   overflow:hidden + width:100% keeps the collapse button
+   from spilling outside the sidebar's visible area. */
 [data-testid="stSidebarHeader"] {
     background: transparent !important;
     border-bottom: none !important;
@@ -124,10 +130,23 @@ div[data-testid="stVerticalBlockSeparator"],
     padding: 0 8px 0 0 !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-end !important;  /* push collapse btn to the right */
+    justify-content: flex-end !important;
     position: relative !important;
-    z-index: 10 !important;               /* sits above the brand block */
-    overflow: visible !important;
+    z-index: 10 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+}
+
+/* Collapse button container — keep it in-flow and visible */
+[data-testid="stSidebarCollapseButton"] {
+    position: relative !important;
+    z-index: 11 !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    margin-right: 4px !important;
 }
 
 /* Style the collapse button to match our theme */
@@ -189,7 +208,7 @@ section[data-testid="stSidebar"] > div:first-child {
    Pulled up by margin-top: -52px to sit behind stSidebarHeader.
    Its own height is 52px so the border-bottom lands exactly
    where the header row ends — creating one seamless header band.
-   The collapse button (z-index: 10) renders on top of it.
+   The collapse button (z-index: 11) renders on top of it.
 ───────────────────────────────────────────────────────────── */
 .sb-brand {
     display: flex;
