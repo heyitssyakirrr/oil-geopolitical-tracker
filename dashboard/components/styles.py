@@ -375,10 +375,10 @@ section[data-testid="stSidebar"] > div:first-child {
 .sb-brand {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 1.1rem;
-    text-align: center;
+    text-align: justify;
     letter-spacing: 0.2em;
     color: #ff8a4c;
-    padding: 14px 14px 2px;
+    padding: 14px 14px;
     display: block;
     line-height: 1.2;
 }
