@@ -68,36 +68,26 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     box-sizing: border-box !important;
 }
 
-/* Logo container — fills the left side of the header row */
+/* Logo container — left side of header row */
 [data-testid="stLogo"] {
     flex: 1 1 auto !important;
     display: flex !important;
     align-items: center !important;
-    gap: 10px !important;
-    text-decoration: none !important;
-    overflow: hidden !important;
     min-width: 0 !important;
+    overflow: visible !important;
 }
 
-/* The <img> Streamlit renders from st.logo() — we show this as the icon */
+/* The <img> Streamlit renders — sized to match the SVG viewBox */
 [data-testid="stLogo"] img {
-    width: 28px !important;
-    height: 28px !important;
-    border-radius: 6px !important;
-    flex-shrink: 0 !important;
+    width: auto !important;
+    height: 36px !important;
+    max-width: 180px !important;
     display: block !important;
 }
 
-/* "Main Menu" text injected via ::after so no extra HTML needed */
+/* Remove ::after — text is now drawn inside the SVG itself */
 [data-testid="stLogo"]::after {
-    content: "Main Menu";
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    color: #c8d3ea;
-    text-transform: uppercase;
-    white-space: nowrap;
+    content: none !important;
 }
 
 /* stLogoSpacer appears when there is no logo — hide it */
