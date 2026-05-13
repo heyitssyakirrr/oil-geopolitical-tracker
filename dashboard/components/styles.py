@@ -72,13 +72,15 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     visibility: visible !important;
     opacity: 1 !important;
     position: fixed !important;      /* fixed instead of absolute */
-    top: 50px !important;
+    top: 49px !important;
     left: 197px !important;          /* sidebar is ~245px wide, button at right edge */
     z-index: 9999 !important;
     margin: 0 !important;
 }
 
-[data-testid="stSidebarCollapseButton"] > button > div {
+[data-testid="stSidebarCollapseButton"] > button > div,
+[data-testid="stSidebarCollapseButton"] > button > div > div,
+[data-testid="stSidebarCollapseButton"] * div {
     display: none !important;
 }
 
