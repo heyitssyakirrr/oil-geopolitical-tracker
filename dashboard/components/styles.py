@@ -11,7 +11,7 @@ GLOBAL_CSS = """
 /* ── Base reset ────────────────────────────────────────── */
 html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; font-size: 15px; }
 .stApp { background: #080a0f; color: #d4cfc8 ; }
-.block-container { padding: 2.8rem 2.5rem 2.8rem 2.5rem !important; max-width: 100% !important; width: 100% !important; }
+.block-container { padding: 4rem 2.5rem 4rem 2.5rem !important; max-width: 100% !important; width: 100% !important; }
 header[data-testid="stHeader"] { background: transparent !important; }
 header[data-testid="stHeader"]::before { display: none !important; }
 
