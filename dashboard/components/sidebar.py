@@ -3,11 +3,12 @@ sidebar.py
 ----------
 Sidebar navigation using Streamlit's native elements.
 
-Structure (mirrors Streamlit's DOM):
-    stSidebarHeader     ← st.logo() renders here, collapse button lives here too
-    stSidebarContent    ← everything inside `with st.sidebar:` goes here
-        nav groups      ← section labels + st.button rows
-        pipeline status ← last run footer
+DOM structure (Streamlit):
+    [data-testid="stSidebarHeader"]   ← st.logo() + collapse button
+    [data-testid="stSidebarContent"]  ← everything inside `with st.sidebar:`
+        .sb-brand-block               ← 📡 icon + two-line title
+        nav groups                    ← section labels + nav buttons
+        .sb-run-footer                ← last pipeline run
 """
 
 import streamlit as st
@@ -36,42 +37,30 @@ _NAV_GROUPS = [
 
 
 def render_sidebar(runs) -> None:
-    """
-    Render sidebar navigation.
+    """Render sidebar navigation with brand header, nav groups, and pipeline footer."""
 
-    - st.logo() injects into stSidebarHeader so the collapse button and
-      the brand logo/text share the same native header row.
-    - Navigation groups and the pipeline footer live in stSidebarContent
-      via `with st.sidebar:`.
-    """
-
-    # ── Header row (stSidebarHeader) ─────────────────────────────────────────
-    # st.logo() is the only official way to place content in the header row
-    # next to the collapse button.  We use an SVG data URI so there is no
-    # external dependency.  The CSS in styles.py hides the <img> and shows
-    # the .sb-logo-label text pseudo-element instead.
-    LOGO_SVG = (
+    # ── Header row — st.logo() is the only official way to inject into
+    #    stSidebarHeader (next to the collapse button).
+    #    We use a transparent 1×1 SVG so the slot is occupied but invisible;
+    #    the real branding lives in stSidebarContent below.
+    BLANK_SVG = (
         "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' "
-        "width='32' height='32' viewBox='0 0 32 32'%3E"
-        "%3Crect width='32' height='32' rx='6' fill='%230a0d14' "
-        "stroke='%231e2640' stroke-width='1.5'/%3E"
-        "%3Ctext x='16' y='23' font-size='18' text-anchor='middle' "
-        "font-family='Apple Color Emoji%2CSegoe UI Emoji%2Csans-serif'%3E"
-        "%F0%9F%92%BB"  # 💻
-        "%3C/text%3E"
-        "%3C/svg%3E"
+        "width='1' height='1'%3E%3C/svg%3E"
     )
-    st.logo(LOGO_SVG, size="medium")
+    st.logo(BLANK_SVG, size="small")
 
-    # ── Sidebar content (stSidebarContent) ───────────────────────────────────
+    # ── Sidebar content ───────────────────────────────────────────────────────
     with st.sidebar:
 
-        # Dashboard title — lives here so it's hidden when sidebar collapses
+        # Brand block — mirrors the dashboard's global title style
         st.markdown(
             """
-            <div class="sb-title-block">
-                <span class="sb-title-line1">📡 GLOBAL CRISIS</span>
-                <span class="sb-title-line2">COMMODITY TRACKER</span>
+            <div class="sb-brand">
+                <span class="sb-brand-icon">📡</span>
+                <div class="sb-brand-text">
+                    <span class="sb-brand-line1">GLOBAL CRISIS</span>
+                    <span class="sb-brand-line2">COMMODITY TRACKER</span>
+                </div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -85,7 +74,6 @@ def render_sidebar(runs) -> None:
             )
             for icon, page_name in pages:
                 is_active = st.session_state.get("page") == page_name
-                # Wrap in a div so CSS can target active state
                 st.markdown(
                     f'<div class="sb-nav-item{"--active" if is_active else ""}">',
                     unsafe_allow_html=True,
@@ -99,7 +87,7 @@ def render_sidebar(runs) -> None:
                     st.rerun()
                 st.markdown("</div>", unsafe_allow_html=True)
 
-        # ── Pipeline run footer ───────────────────────────────────────────────
+        # Pipeline run footer
         if runs is not None and not runs.empty:
             last   = runs.iloc[0]
             status = last.get("status", "unknown")
