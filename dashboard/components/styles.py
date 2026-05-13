@@ -28,21 +28,63 @@ div[data-testid="stVerticalBlockSeparator"] { display: none !important; }
     min-width: 245px !important;
     max-width: 285px !important;
 }
+/* Hide the logo spacer that causes the empty gap */
+[data-testid="stLogoSpacer"] {
+    display: none !important;
+}
+
+/* Shrink header to just fit the collapse button — no extra space */
 [data-testid="stSidebarHeader"] {
     padding: 0 !important;
     min-height: 0 !important;
-    height: 0 !important;
+    height: auto !important;          /* let it size to its content */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    background: #0a0d14 !important;
 }
-[data-testid="stLogoSpacer"] {
-    display: none !important;
+
+/* Make the collapse button visible and styled */
+[data-testid="stSidebarCollapseButton"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    margin: 4px 6px 0 0 !important;
+}
+
+[data-testid="stSidebarCollapseButton"] button {
+    background: transparent !important;
+    border: 1px solid #1a2035 !important;
+    border-radius: 4px !important;
+    color: #8faad0 !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+[data-testid="stSidebarCollapseButton"] button:hover {
+    border-color: #ff8a4c !important;
+    color: #ff8a4c !important;
 }
 [data-testid="stSidebar"] [data-testid="stElementContainer"] {
     width: 100% !important;
 }
-[data-testid="stSidebarContent"] { padding: 0 !important; }
-[data-testid="stSidebarNav"] { height: 0 !important; overflow: hidden !important; }
-section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; }
-[data-testid="stSidebar"] div.stButton { width: 100% !important; }
+[data-testid="stSidebarContent"] { 
+    padding: 0 !important; 
+}
+[data-testid="stSidebarNav"] { 
+    height: 0 !important;   
+    overflow: hidden !important; 
+}
+section[data-testid="stSidebar"] > div:first-child { 
+    padding-top: 0 !important; 
+}
+[data-testid="stSidebar"] div.stButton { 
+    width: 100% !important; 
+}
 [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
     background: #111520 !important;
     border: 1px solid #1a2035 !important;
@@ -338,9 +380,6 @@ section[data-testid="stSidebar"] > div:first-child { padding-top: 0 !important; 
     text-overflow: ellipsis !important;
     color: #c8d3ea !important;
 }
-[data-testid="stSidebarCollapseButton"] {
-    display: none !important;
-}
 
 /* ── Sidebar radio nav ────────────────────────────────── */
 div[role="radiogroup"] label[data-baseweb="radio"] { margin: 0 !important; padding: 0 !important; }
@@ -477,13 +516,5 @@ label[data-testid="stWidgetLabel"] p {
 ::-webkit-scrollbar-track { background: #080a0f; }
 ::-webkit-scrollbar-thumb { background: #1a2035; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: #2a3350; }
-
-/* Always show the sidebar collapse/expand toggle */
-button[data-testid="collapsedControl"],
-button[kind="header"] {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
 </style>
 """
