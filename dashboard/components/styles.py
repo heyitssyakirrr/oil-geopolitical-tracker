@@ -2,11 +2,11 @@
 Global CSS for the Global Crisis · Commodity Tracker dashboard.
 Dark industrial theme — high visibility, data-forward design.
 
-CSS is organised into clearly labelled sections:
+CSS sections:
     1.  Base reset & app shell
     2.  Global title bar
     3.  Sidebar — shell & header row
-    4.  Sidebar — brand block (inside stSidebarContent)
+    4.  Sidebar — brand block
     5.  Sidebar — nav section labels
     6.  Sidebar — nav buttons (default + active)
     7.  Sidebar — pipeline run footer
@@ -85,15 +85,13 @@ div[data-testid="stVerticalBlockSeparator"],
 
 /* ─────────────────────────────────────────────────────────────
    3. SIDEBAR — SHELL & HEADER ROW
-   
-   The sidebar has two DOM children:
-     stSidebarHeader  — contains st.logo() slot + collapse button
-     stSidebarContent — contains everything inside `with st.sidebar:`
-   
-   The header row is given a proper height so the logo renders
-   inside the sidebar (not above/outside it).  When collapsed,
-   the header and content are both hidden — only the expand
-   arrow remains visible.
+
+   stSidebarHeader holds only the collapse/expand button.
+   We collapse its height to zero and hide the logo slot entirely
+   because the brand block lives inside stSidebarContent instead.
+   When the sidebar is collapsed, everything inside it disappears
+   automatically — only the expand arrow (rendered outside the
+   sidebar by Streamlit) remains.
 ───────────────────────────────────────────────────────────── */
 
 /* Sidebar shell */
@@ -104,48 +102,27 @@ div[data-testid="stVerticalBlockSeparator"],
     max-width: 268px !important;
 }
 
-/* Collapsed sidebar: zero width — everything disappears */
+/* Collapsed sidebar: zero width, nothing visible */
 [data-testid="stSidebar"][aria-expanded="false"] {
     width: 0 !important;
     min-width: 0 !important;
     overflow: hidden !important;
 }
 
-/* Header row — visible, fixed height so logo renders inside the sidebar */
+/* Collapse the header row — we don't use st.logo() so there's
+   nothing useful here; the collapse button is rendered separately
+   by Streamlit and doesn't sit inside this element. */
 [data-testid="stSidebarHeader"] {
-    background: #0a0d14 !important;
-    border-bottom: 1px solid #1e2640 !important;
-    padding: 0 8px !important;
-    min-height: 52px !important;
-    height: 52px !important;
-    display: flex !important;
-    align-items: center !important;
-    overflow: visible !important;   /* was hidden — that pushed the logo out */
-}
-
-/* Hide header row when sidebar is collapsed so only the expand arrow shows */
-[data-testid="stSidebar"][aria-expanded="false"] [data-testid="stSidebarHeader"] {
     display: none !important;
 }
 
-/* Logo image — fill the available width of the header slot, medium size */
-[data-testid="stLogo"] {
-    display: flex !important;
-    align-items: center !important;
-}
-[data-testid="stLogo"] img {
-    height: 40px !important;
-    width: auto !important;
-    max-width: 200px !important;
-    object-fit: contain !important;
-}
-
-/* Hide the logo spacer element (Streamlit adds it for layout; not needed here) */
+/* Hide logo slots (not used, but belt-and-suspenders) */
+[data-testid="stLogo"],
 [data-testid="stLogoSpacer"] {
     display: none !important;
 }
 
-/* Sidebar content area — remove default padding; we control it */
+/* Sidebar content area */
 [data-testid="stSidebarContent"] {
     padding: 0 !important;
     overflow-y: auto !important;
@@ -168,17 +145,17 @@ section[data-testid="stSidebar"] > div:first-child {
 
 
 /* ─────────────────────────────────────────────────────────────
-   4. SIDEBAR — BRAND BLOCK  (inside stSidebarContent)
-   
-   Only used if you render a manual brand block via HTML.
-   The primary brand mark is now the st.logo() SVG in the
-   header row (section 3 above).
+   4. SIDEBAR — BRAND BLOCK
+
+   Sits at the top of stSidebarContent (rendered via st.markdown).
+   Disappears automatically when the sidebar collapses.
+   Matches the main dashboard title style: Bebas Neue, #ff8a4c.
 ───────────────────────────────────────────────────────────── */
 .sb-brand {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 18px 4px 16px;
+    padding: 16px 4px 14px;
     border-bottom: 1px solid #1e2640;
     margin-bottom: 0;
 }
@@ -193,10 +170,16 @@ section[data-testid="stSidebar"] > div:first-child {
     gap: 0;
     line-height: 1.15;
 }
-.sb-brand-line1,
+.sb-brand-line1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.35rem;
+    letter-spacing: 0.18em;
+    color: #ff8a4c;
+    display: block;
+}
 .sb-brand-line2 {
     font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.3rem;
+    font-size: 1.05rem;
     letter-spacing: 0.18em;
     color: #ff8a4c;
     display: block;
@@ -220,26 +203,30 @@ p.sb-section-label {
 
 /* ─────────────────────────────────────────────────────────────
    6. SIDEBAR — NAV BUTTONS
-   
-   Each button is wrapped in div.sb-nav-item (or --active).
-   - Vertical padding is kept tight (2px margin between items).
-   - Horizontal padding is generous so text doesn't hug the edges.
+
+   Wrapper div controls outer spacing:
+     - horizontal padding increased so text has breathing room
+       from sidebar edges
+     - vertical margin kept tight to reduce gap between buttons
+
+   Button height reduced from 38px → 32px to reduce vertical
+   padding inside each item.
 ───────────────────────────────────────────────────────────── */
 
-/* Wrapper — controls spacing between buttons and sidebar edges */
+/* Wrapper */
 div.sb-nav-item,
 div.sb-nav-item--active {
-    padding: 0 10px;    /* increased horizontal padding from 8px → 10px */
-    margin-bottom: 1px; /* reduced from 2px → 1px for tighter vertical rhythm */
+    padding: 0 10px;    /* more horizontal room */
+    margin-bottom: 1px; /* tighter vertical rhythm */
 }
 
 /* ── Default button ── */
 div.sb-nav-item [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 32px !important;        /* reduced from 38px → 32px */
+    height: 32px !important;
     text-align: left !important;
     justify-content: flex-start !important;
-    padding-left: 14px !important;  /* slightly more inner left padding */
+    padding-left: 14px !important;
     border-radius: 5px !important;
     background: transparent !important;
     border: 1px solid transparent !important;
@@ -253,14 +240,14 @@ div.sb-nav-item [data-testid="stBaseButton-secondary"]:hover {
 /* ── Active button ── */
 div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 32px !important;        /* reduced from 38px → 32px */
+    height: 32px !important;
     text-align: left !important;
     justify-content: flex-start !important;
     background: #0f1520 !important;
     border: 1px solid #1e2640 !important;
     border-left: 3px solid #ff8a4c !important;
     border-radius: 5px !important;
-    padding-left: 12px !important;  /* compensates for wider left border */
+    padding-left: 12px !important;
 }
 
 /* ── Button label text ── */
