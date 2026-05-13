@@ -272,17 +272,18 @@ p.sb-section-label {
 /* Wrapper */
 div.sb-nav-item,
 div.sb-nav-item--active {
-    padding: 10px 5px;
+    padding: 0 4px;
     margin-bottom: 1px;
 }
 
 /* ── Default button ── */
 div.sb-nav-item [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 32px !important;
+    height: 25px !important;
+    min-height: 25px !important;
     text-align: left !important;
     justify-content: flex-start !important;
-    padding-left: 5px !important;
+    padding: 4px 8px !important;
     border-radius: 5px !important;
     background: transparent !important;
     border: 1px solid transparent !important;
@@ -296,14 +297,15 @@ div.sb-nav-item [data-testid="stBaseButton-secondary"]:hover {
 /* ── Active button ── */
 div.sb-nav-item--active [data-testid="stBaseButton-secondary"] {
     width: 100% !important;
-    height: 32px !important;
+    height: 25px !important;
+    min-height: 25px !important;
     text-align: left !important;
     justify-content: flex-start !important;
     background: #0f1520 !important;
     border: 1px solid #1e2640 !important;
     border-left: 3px solid #ff8a4c !important;
     border-radius: 5px !important;
-    padding-left: 5px !important;
+    padding: 4px 8px !important;
 }
 
 /* ── Button label text ── */
