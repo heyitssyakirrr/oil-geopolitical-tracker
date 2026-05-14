@@ -192,13 +192,6 @@ div[data-testid="stVerticalBlockSeparator"],
     width: 100% !important;
 }
 
-/* Kill the default vertical gap Streamlit sets on stVerticalBlock inside
-   the sidebar — this is what makes every element inside the sidebar have
-   a large gap between it and the next one */
-[data-testid="stSidebar"] [data-testid="stVerticalBlock"] {
-    gap: 0 !important;
-}
-
 /* Hide Streamlit's auto-generated page nav */
 [data-testid="stSidebarNav"] {
     height: 0 !important;
@@ -259,12 +252,11 @@ section[data-testid="stSidebar"] > div:first-child {
 
 /* ─────────────────────────────────────────────────────────────
    5. SIDEBAR — NAV SECTION LABELS  (MAIN / BY CATEGORY / …)
-   Color updated to #8faad0 to match filter label brightness
 ───────────────────────────────────────────────────────────── */
 p.sb-section-label {
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 10px !important;
-    color: #8faad0 !important;          /* ↑ was #4a5878 — now matches filter labels */
+    color: #4a5878 !important;
     letter-spacing: 0.2em !important;
     text-transform: uppercase !important;
     padding: 10px 4px 3px !important;
@@ -275,37 +267,13 @@ p.sb-section-label {
 
 /* ─────────────────────────────────────────────────────────────
    6. SIDEBAR — NAV BUTTONS
-   Changes:
-     • margin-bottom reduced from 2px → 1px  (tighter gap)
-     • padding changed to 0 10px             (breathing room from sidebar edges)
-     • text-align and justify-content set to left-align button content
 ───────────────────────────────────────────────────────────── */
 
 /* Wrapper — controls left/right gap between button and sidebar edge */
 div.sb-nav-item,
 div.sb-nav-item--active {
-    padding: 0 10px;
-    margin-bottom: 1px;
-}
-
-/* Collapse Streamlit's own stElementContainer margin inside nav items —
-   THIS is the real source of the large gap between buttons */
-div.sb-nav-item [data-testid="stElementContainer"],
-div.sb-nav-item--active [data-testid="stElementContainer"] {
-    margin: 0 !important;
-    padding: 0 !important;
-    min-height: unset !important;
-    gap: 0 !important;
-}
-
-/* Also collapse the vertical block wrappers Streamlit uses inside sidebar */
-div.sb-nav-item [data-testid="stVerticalBlock"],
-div.sb-nav-item--active [data-testid="stVerticalBlock"],
-div.sb-nav-item [data-testid="stVerticalBlockBorderWrapper"],
-div.sb-nav-item--active [data-testid="stVerticalBlockBorderWrapper"] {
-    gap: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    padding: 0 16px;        /* ← increase for more horizontal space */
+    margin-bottom: 2px;     /* ← gap between each button */
 }
 
 /* ── Default button ── */
@@ -345,8 +313,6 @@ div.sb-nav-item--active [data-testid="stBaseButton-secondary"] span {
     line-height: 30px !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;     /* ← left-align icon + text */
-    width: 100% !important;
 }
 
 /* ── Button label text ── */
@@ -360,8 +326,6 @@ div.sb-nav-item--active [data-testid="stBaseButton-secondary"] p {
     margin: 0 !important;
     padding: 0 !important;
     line-height: 30px !important;
-    text-align: left !important;    /* ← ensure text left-aligns inside the p tag */
-    width: 100% !important;
 }
 div.sb-nav-item [data-testid="stBaseButton-secondary"] p {
     color: #7a8faf !important;
