@@ -256,7 +256,7 @@ section[data-testid="stSidebar"] > div:first-child {
 p.sb-section-label {
     font-family: 'IBM Plex Mono', monospace !important;
     font-size: 10px !important;
-    color: #4a5878 !important;
+    color: #8faad0 !important;
     letter-spacing: 0.2em !important;
     text-transform: uppercase !important;
     padding: 10px 4px 3px !important;
