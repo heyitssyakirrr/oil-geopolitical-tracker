@@ -1,71 +1,89 @@
+"""
+app.py
+------
+Streamlit entry point for the Global Crisis — Commodity Tracker dashboard.
+
+Routing uses a PAGE_RENDERERS dict so adding a new page is a single line:
+    1. Add the import at the top of the imports block
+    2. Add one entry to PAGE_RENDERERS
+
+Data is loaded once per session via @st.cache_data / @st.cache_resource
+in components/data.py — all page renderers receive the same DataFrames.
+"""
+
 import streamlit as st
 
-from components import GLOBAL_CSS, load_events, load_prices, load_runs, render_sidebar
-from pages import (
-    overview,
-    energy,
-    agriculture,
-    livestock,
-    macro,
-    ripple_effects,
-    event_intelligence,
-    price_analysis,
-    commodity_comparison,
-    pipeline,
-)
+from old_components.styles import GLOBAL_CSS
+from old_components.data import load_prices, load_events, load_runs
+from old_components.sidebar import render_sidebar
 
+# ── Page imports ──────────────────────────────────────────────────────────────
+# Grouped by nav section to mirror the sidebar structure.
+# To add a page: import it here and add one entry to PAGE_RENDERERS below.
+from pages.overview             import render as overview
+from pages.energy               import render as energy
+from pages.agriculture          import render as agriculture
+from pages.livestock            import render as livestock
+from pages.macro                import render as macro
+from pages.ripple_effects       import render as ripple_effects
+from pages.event_intelligence   import render as event_intelligence
+from pages.price_analysis       import render as price_analysis
+from pages.commodity_comparison import render as commodity_comparison
+from pages.pipeline             import render as pipeline
+
+# ── Must be the very first Streamlit call ─────────────────────────────────────
 st.set_page_config(
-    page_title="Global Crisis - Commodity Tracker",
+    page_title="Commodity Tracker",
     page_icon="📡",
-    layout="wide", # use the full browser width instead of the default narrow centred column
+    layout="wide",
     initial_sidebar_state="expanded",
 )
 
-if "sidebar_state" not in st.session_state:
-    st.session_state.sidebar_state = "expanded"
-
+# ── Inject cosmetic CSS (fonts + colours only, no layout overrides) ───────────
 st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
 
+# ── Session state defaults ────────────────────────────────────────────────────
 if "page" not in st.session_state:
     st.session_state.page = "Overview"
 
-# these three calls will be cached by Streamlit, 
-# so they won't hit the database on every interaction, 
-# just the first load and when the underlying data changes
+# ── Load data (cached — runs once, not on every interaction) ──────────────────
 prices = load_prices()
 events = load_events()
 runs   = load_runs()
 
-# receives runs to display the last pipeline run status
-# uses with st.sidebar: to place everything inside sidebar panel
+# ── Sidebar navigation (sets st.session_state.page on click) ─────────────────
 render_sidebar(runs)
 
-# lambda functions to be called when a page is selected from the sidebar
+# ── Page renderer registry ────────────────────────────────────────────────────
+# Keys match exactly what render_sidebar() writes to st.session_state.page.
+# Values are zero-argument callables — lambdas bind the correct DataFrames
+# so every render function keeps its own signature (prices, events) or (runs).
+#
+# To add a page:
+#   1. Import its render function above
+#   2. Add one line here: "Page Name": lambda: new_page(prices, events)
 PAGE_RENDERERS = {
     # Main
-    "Overview":           lambda: overview.render(prices, events),
+    "Overview":           lambda: overview(prices, events),
     # By category
-    "Energy":             lambda: energy.render(prices, events),
-    "Agriculture":        lambda: agriculture.render(prices, events),
-    "Livestock":          lambda: livestock.render(prices, events),
-    "Macro":              lambda: macro.render(prices, events),
+    "Energy":             lambda: energy(prices, events),
+    "Agriculture":        lambda: agriculture(prices, events),
+    "Livestock":          lambda: livestock(prices, events),
+    "Macro":              lambda: macro(prices, events),
     # Analysis
-    "Ripple Effects":     lambda: ripple_effects.render(prices, events),
-    "Event Intelligence": lambda: event_intelligence.render(prices, events),
-    "Price Analysis":     lambda: price_analysis.render(prices, events),
-    "Comparison":         lambda: commodity_comparison.render(prices, events),
+    "Ripple Effects":     lambda: ripple_effects(prices, events),
+    "Event Intelligence": lambda: event_intelligence(prices, events),
+    "Price Analysis":     lambda: price_analysis(prices, events),
+    "Comparison":         lambda: commodity_comparison(prices, events),
     # System
-    "Pipeline":           lambda: pipeline.render(runs),
+    "Pipeline":           lambda: pipeline(runs),
 }
 
-st.markdown(
-    '<div class="dash-global-title">'
-    '📡 GLOBAL CRISIS &thinsp;—&thinsp; COMMODITY TRACKER'
-    '</div>',
-    unsafe_allow_html=True,
+# ── Route to the active page ──────────────────────────────────────────────────
+# dict.get(key, default) falls back to Overview for any unknown page name,
+# so a stale session_state value can never produce a crash.
+renderer = PAGE_RENDERERS.get(
+    st.session_state.page,
+    PAGE_RENDERERS["Overview"],
 )
-
-# dict dispatch here is cleaner than long if/elif chains for routing
-# dict.get(key, default)
-renderer = PAGE_RENDERERS.get(st.session_state.page, PAGE_RENDERERS["Overview"]) # now is a function
-renderer() # call the function to render the selected page
+renderer()

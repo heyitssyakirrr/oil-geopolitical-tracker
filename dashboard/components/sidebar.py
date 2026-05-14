@@ -1,17 +1,21 @@
 """
 sidebar.py
 ----------
-Sidebar navigation using Streamlit's native elements.
+Sidebar navigation using only native Streamlit elements.
 
-Brand mark is rendered as plain HTML inside `with st.sidebar:` so it
-lives inside stSidebarContent and disappears naturally when the sidebar
-collapses.  st.logo() is NOT used — it renders in a sticky top-bar above
-the entire app and cannot be moved into the sidebar with CSS.
+No custom HTML, no negative margins, no CSS position overrides.
+Works identically on localhost and Streamlit Cloud.
+
+Navigation groups and pages are defined in _NAV_GROUPS.
+Clicking a button sets st.session_state.page and triggers st.rerun().
+The active page button is rendered with type="primary" — Streamlit's
+built-in primary button style — so no CSS is needed for the active state.
 """
 
 import streamlit as st
 
-
+# ── Navigation structure ──────────────────────────────────────────────────────
+# Each group is (section_label, [(icon, page_name), ...])
 _NAV_GROUPS = [
     ("MAIN", [
         ("🏠", "Overview"),
@@ -33,67 +37,77 @@ _NAV_GROUPS = [
     ]),
 ]
 
+# Severity colour mapping for pipeline run footer
+_STATUS_COLORS = {
+    "success": "green",
+    "failed":  "red",
+    "running": "orange",
+}
+
 
 def render_sidebar(runs) -> None:
-    """Render sidebar navigation with brand header, nav groups, and pipeline footer."""
-
+    """
+    Renders the full sidebar:
+      - Brand header
+      - Navigation groups with section labels and page buttons
+      - Pipeline run status footer
+    """
     with st.sidebar:
 
-        # ── Brand block ───────────────────────────────────────────────────────
-        # Rendered as HTML inside stSidebarContent so it collapses with the
-        # sidebar automatically — no st.logo() needed or wanted.
+        # ── Brand header ──────────────────────────────────────────────────────
+        # st.markdown with minimal inline style — only font and colour,
+        # no layout geometry that could break across environments.
         st.markdown(
             """
-            <div class="sb-brand">
-                <span class="sb-brand-icon">📡</span>
-                <div class="sb-brand-text">
-                    <span class="sb-brand-line1">GLOBAL CRISIS</span>
-                    <span class="sb-brand-line2">COMMODITY TRACKER</span>
-                </div>
+            <div style="padding: 1rem 0 0.5rem 0;">
+                <span style="font-size:1.6rem;">📡</span>
+                <span style="
+                    font-family: 'Bebas Neue', sans-serif;
+                    font-size: 1.2rem;
+                    letter-spacing: 0.15em;
+                    color: #ff8a4c;
+                    margin-left: 8px;
+                    vertical-align: middle;
+                ">COMMODITY TRACKER</span>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        # ── Nav groups ────────────────────────────────────────────────────────
-        for group_label, pages in _NAV_GROUPS:
-            st.markdown(
-                f'<p class="sb-section-label">{group_label}</p>',
-                unsafe_allow_html=True,
-            )
+        st.divider()
+
+        # ── Navigation groups ─────────────────────────────────────────────────
+        current_page = st.session_state.get("page", "Overview")
+
+        for section_label, pages in _NAV_GROUPS:
+            # Section label — native Streamlit caption (small grey text)
+            st.caption(section_label)
+
             for icon, page_name in pages:
-                is_active = st.session_state.get("page") == page_name
-                st.markdown(
-                    f'<div class="sb-nav-item{"--active" if is_active else ""}">',
-                    unsafe_allow_html=True,
-                )
+                # Active page gets type="primary" (Streamlit's built-in highlight)
+                # All other pages get type="secondary" (default)
+                btn_type = "primary" if current_page == page_name else "secondary"
+
                 if st.button(
                     f"{icon}  {page_name}",
                     key=f"nav_{page_name}",
                     use_container_width=True,
+                    type=btn_type,
                 ):
                     st.session_state.page = page_name
                     st.rerun()
-                st.markdown("</div>", unsafe_allow_html=True)
 
         # ── Pipeline run footer ───────────────────────────────────────────────
         if runs is not None and not runs.empty:
+            st.divider()
+
             last   = runs.iloc[0]
-            status = last.get("status", "unknown")
-            color  = {
-                "success": "#22c55e",
-                "failed":  "#ef4444",
-                "running": "#f59e0b",
-            }.get(status, "#6b7fa8")
-            rows = int(last.get("rows_loaded", 0) or 0)
+            status = str(last.get("status", "unknown"))
+            rows   = int(last.get("rows_loaded", 0) or 0)
+            color  = _STATUS_COLORS.get(status, "gray")
+
+            st.caption("LAST PIPELINE RUN")
             st.markdown(
-                f"""
-                <div class="sb-run-footer">
-                    <div class="sb-run-label">LAST PIPELINE RUN</div>
-                    <div class="sb-run-value" style="color:{color}">
-                        ● {status.upper()} · {rows:,} rows
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
+                f":{color}[● {status.upper()}] &nbsp; `{rows:,} rows`",
+                unsafe_allow_html=False,
             )
