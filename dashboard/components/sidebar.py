@@ -17,20 +17,20 @@ import streamlit as st
 # ── Navigation structure ──────────────────────────────────────────────────────
 # Each group is (section_label, [(icon, page_name), ...])
 _NAV_GROUPS = [
-    ("BRIEFING", [
+    ("MAIN", [
         ("🏠", "Overview"),
-        ("💥", "Event Intelligence"),
     ]),
-    ("MARKETS", [
+    ("BY CATEGORY", [
         ("⚡", "Energy"),
         ("🌾", "Agriculture"),
         ("🐄", "Livestock"),
         ("📊", "Macro"),
     ]),
-    ("ADVANCED", [
+    ("ANALYSIS", [
+        ("🔗", "Ripple Effects"),
+        ("💥", "Event Intelligence"),
         ("📈", "Price Analysis"),
         ("🔄", "Comparison"),
-        ("🔗", "Ripple Effects"),
     ]),
     ("SYSTEM", [
         ("🔧", "Pipeline"),

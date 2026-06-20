@@ -6,13 +6,6 @@ from .constants import (
     label_map, color_map, category_map,
 )
 from .data import get_engine, load_prices, load_events, load_runs
-from .insights import (
-    latest_window,
-    commodity_returns,
-    recent_event_summary,
-    important_events,
-    risk_label,
-)
 from .charts import (
     base_layout,
     price_history_chart,
@@ -41,8 +34,6 @@ __all__ = [
     "PLOT_BG", "GRID_CLR", "FONT_CLR",
     "label_map", "color_map", "category_map",
     "get_engine", "load_prices", "load_events", "load_runs",
-    "latest_window", "commodity_returns", "recent_event_summary",
-    "important_events", "risk_label",
     "base_layout",
     "price_history_chart", "candlestick_chart", "return_histogram",
     "volatility_chart", "monthly_range_bar",

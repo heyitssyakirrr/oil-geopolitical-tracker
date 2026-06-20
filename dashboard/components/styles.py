@@ -83,7 +83,6 @@ div[data-testid="stVerticalBlockSeparator"],
 }
 
 
-
 /* ─────────────────────────────────────────────────────────────
    3. SIDEBAR — SHELL & HEADER ROW
 
@@ -199,6 +198,8 @@ div[data-testid="stVerticalBlockSeparator"],
     overflow: hidden !important;
 }
 section[data-testid="stSidebar"] > div:first-child {
+    padding-top: 0 !important;
+}
 
 
 /* ─────────────────────────────────────────────────────────────
@@ -503,21 +504,7 @@ div.sb-nav-item--active [data-testid="stBaseButton-secondary"] p {
     color: #7a8faf;
     margin-top: 2px;
 }
-.kpi-grid-compact {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    margin-top: 12px;
-    margin-bottom: 18px;
-}
-.kpi-grid-compact .kpi-card {
-    height: 112px;
-    padding: 14px 16px;
-}
-.kpi-grid-compact .kpi-value {
-    font-size: 1.8rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
+
 
 /* ─────────────────────────────────────────────────────────────
    11. SECTION HEADINGS
@@ -729,32 +716,6 @@ label[data-testid="stWidgetLabel"] p {
 }
 .stDataFrame { background: #0c0f18 !important; }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #0c0f18;
-    border: 1px solid #1a2035;
-}
-table th {
-    background: #080a0f;
-    color: #8faad0;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    text-align: left;
-    padding: 10px 12px;
-    border-bottom: 1px solid #1a2035;
-}
-table td {
-    color: #b8cce4;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    padding: 10px 12px;
-    border-bottom: 1px solid #111520;
-    vertical-align: top;
-}
-
 
 /* ─────────────────────────────────────────────────────────────
    18. SCROLLBAR
@@ -763,23 +724,5 @@ table td {
 ::-webkit-scrollbar-track { background: #080a0f; }
 ::-webkit-scrollbar-thumb { background: #1a2035; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: #2a3350; }
-
-@media (max-width: 900px) {
-    .kpi-grid,
-    .kpi-grid-compact,
-    .cat-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .page-title {
-        font-size: 2rem;
-        letter-spacing: 0.04em;
-    }
-
-    .dash-global-title {
-        font-size: 1.6rem;
-        letter-spacing: 0.08em;
-    }
-}
 </style>
 """
